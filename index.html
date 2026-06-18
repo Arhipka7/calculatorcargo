@@ -317,11 +317,9 @@
 
     <!-- Библиотеки html2canvas и jspdf (минифицированные) -->
     <script>
-        /*! html2canvas 1.4.1 */
         (function(){var f=function(){function f(e,t,n){var r=n;if(typeof e!="string")throw new Error("html2canvas: неверный тип для элемента");var i=document.querySelector(e);if(!i)throw new Error("html2canvas: элемент не найден");var o=window.getComputedStyle(i);if(o.display==="none")throw new Error("html2canvas: элемент скрыт");var a={backgroundColor:o.backgroundColor,scale:t||window.devicePixelRatio||1,logging:!1};if(r)for(var s in r)a[s]=r[s];return this.element=i,this.options=a,this.canvas=document.createElement("canvas"),this.ctx=this.canvas.getContext("2d"),this.width=0,this.height=0,this}return f.prototype.render=function(){var e=this;return new Promise(function(t,n){var r=e.element,i=e.options,o=i.scale,a=i.backgroundColor,s=e.ctx,u=r.offsetWidth*l,l=r.offsetHeight*l;e.width=u,e.height=l,e.canvas.width=u,e.canvas.height=l,s.fillStyle=a,s.fillRect(0,0,u,l);var c=new XMLSerializer().serializeToString(r);var d="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="'+u+'" height="'+l+'"><foreignObject width="100%" height="100%">'+c+"</foreignObject></svg>");var h=new Image;h.onload=function(){s.drawImage(h,0,0),t(e.canvas)},h.onerror=n,h.src=d})},f}();window.html2canvas=f})();
     </script>
     <script>
-        /*! jsPDF 2.5.1 (мини) */
         var jsPDF=function(){function t(e,n,r,i){this.internal={},this.internal.pdfVersion="1.3",this.internal.page=0,this.internal.pages=[],this.internal.currentPage={},this.internal.buffer="",this.internal.fonts={},this.internal.fontSize=16,this.internal.fontFamily="helvetica",this.internal.lineHeight=1.15,this.internal.textColor="#000000",this.internal.drawColor="#000000",this.internal.fillColor="#000000",this.internal.lineWidth=0.200025,this.internal.pageWidth=595.28,this.internal.pageHeight=841.89,this.internal.scaleFactor=1,this.internal.orientation="portrait",this.internal.layout="A4"}return t.prototype.addImage=function(e,t,n,r,i,o,a){this.internal.buffer+=e+" "+t+" "+n+" "+r+" "+i+" "+o+" "+a+"\n"},t.prototype.save=function(e){var t=this.internal.buffer;this.internal.buffer="";var n="%PDF-1.3\n%âãÏÓ\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> >>\nendobj\n4 0 obj\n<< /Length "+t.length+" >>\nstream\n"+t+"\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000210 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n"+String(t.length+300)+"\n%%EOF";var r=new Blob([n],{type:"application/pdf"});if(e){var i=URL.createObjectURL(r);var o=document.createElement("a");o.href=i,o.download=e,o.click(),URL.revokeObjectURL(i)}return r},t}();
     </script>
 
@@ -351,7 +349,7 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // ====================== ОБФУСЦИРОВАННЫЙ JS (с html2canvas для PDF) ======================
+        // ====================== ОБФУСЦИРОВАННЫЙ JS (PDF открывается для просмотра) ======================
         (function(){
             var _0 = document;
             var $ = _0.querySelector.bind(_0);
@@ -367,7 +365,7 @@
             var _a = 'remove';
             var _b = 'add';
 
-            // Функция для сохранения скриншота в PDF
+            // Функция для открытия PDF в новой вкладке
             function saveAsPDF(element, filename) {
                 var notification = $('#'+'notification');
                 if (notification) {
@@ -399,11 +397,38 @@
                         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
                         heightLeft -= pageHeight;
                     }
-                    pdf.save(filename);
-                    if (notification) {
-                        notification.textContent = 'PDF сохранён! 📄';
-                        notification.classList.add('show');
-                        setTimeout(function(){ notification.classList.remove('show'); }, 2000);
+
+                    // Создаём Blob и открываем в новой вкладке
+                    var blob = pdf.output('blob');
+                    var url = URL.createObjectURL(blob);
+                    var newWindow = window.open(url, '_blank');
+                    
+                    // Если окно заблокировано, показываем ссылку для ручного сохранения
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        a.textContent = 'Нажмите, если файл не открылся';
+                        a.style.display = 'block';
+                        a.style.margin = '10px';
+                        document.body.appendChild(a);
+                        if (notification) {
+                            notification.textContent = 'PDF готов! Нажмите на ссылку ниже';
+                            notification.classList.add('show');
+                            setTimeout(function(){ 
+                                notification.classList.remove('show');
+                                a.remove();
+                                URL.revokeObjectURL(url);
+                            }, 4000);
+                        }
+                    } else {
+                        if (notification) {
+                            notification.textContent = 'PDF открыт в новой вкладке';
+                            notification.classList.add('show');
+                            setTimeout(function(){ notification.classList.remove('show'); }, 2000);
+                        }
+                        // Освобождаем URL после закрытия окна (не сразу, чтобы не сломать просмотр)
+                        setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
                     }
                 }).catch(function(error) {
                     if (notification) {
@@ -607,7 +632,7 @@
                 closeHistBtn.addEventListener(_5, function(){ histModal[_4][_a](_2); });
                 function closeHist(){ histModal[_4][_a](_2); }
 
-                // PDF калькулятора (html2canvas + jspdf)
+                // PDF калькулятора (открывается в новой вкладке)
                 exportPdfBtn.addEventListener(_5, function(){
                     saveAsPDF(document.getElementById('calcPanel'), 'Посылка_'+getPkgNum()+'.pdf');
                 });
@@ -713,7 +738,7 @@
                     if(confirm('Удалить?')){ orders=orders.filter(function(o){ return o.id!==currentOrderId; }); currentOrderId=null; saveOrders(); if(orders.length>0) selectOrder(orders[0].id); else clearForm(); showToast('🗑 Заказ удалён'); }
                 });
 
-                // PDF бланка (html2canvas + jspdf)
+                // PDF бланка (открывается в новой вкладке)
                 $('#'+'exportPdfBtn2').addEventListener(_5, function(){
                     if(!currentOrderId){ showToast('⚠️ Выберите заказ'); return; }
                     var o = orders.find(function(o){ return o.id===currentOrderId; });

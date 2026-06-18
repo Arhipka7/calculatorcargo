@@ -17,7 +17,6 @@
     <title>Посылки · Калькулятор & Бланк заказа</title>
     
     <style>
-        /* (ваши стили без изменений) */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Roboto', -apple-system, sans-serif; }
         body { background: #f1f5f9; padding: 15px; min-height: 100vh; min-height: 100dvh; }
         .app-container { max-width: 1400px; margin: 0 auto; }
@@ -286,16 +285,6 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // === Защита от отладки ===
-        (function() {
-            setInterval(function() {
-                // Обнаружение открытых DevTools по разнице размеров окна
-                if (window.outerWidth - window.innerWidth > 100 || window.outerHeight - window.innerHeight > 100) {
-                    document.body.innerHTML = '<div style="text-align:center;margin-top:50px;font-size:20px;">Пожалуйста, закройте инструменты разработчика</div>';
-                }
-            }, 1000);
-        })();
-
         // === Основной обфусцированный код с зашифрованными функциями ===
         (function(){
             var _0 = document;
@@ -313,13 +302,9 @@
             var _b = 'add';
 
             // Расшифровка и выполнение критичных функций
-            // calculateTotal
             var calculateTotal = eval(atob('dmFyIGNhbGN1bGF0ZVRvdGFsID0gZnVuY3Rpb24oKXsKICB2YXIgZHIgPSBwYXJzZUZsb2F0KGRlbFJhdGUudmFsdWUpfHwwOwogIHZhciBjciA9IHBhcnNlRmxvYXQoY2FyZ29SLnZhbHVlKXx8MDsKICB2YXIgaXQgPSBpbmNUYXJlLmNoZWNrZWQ7CiAgdmFyIHR3ID0gcGFyc2VGbG9hdCh0YXJlVy52YWx1ZSl8fDA7CiAgdmFyIHRvdGFsRyA9IDAsIGl0ZW1zID0gMDsKICB2YXIgcm93cyA9ICQkKCcucHJvZHVjdC1yb3cnKTsKICByb3dzLmZvckVhY2goZnVuY3Rpb24ocm93KXsKICAgIHZhciB3ID0gcGFyc2VGbG9hdChyb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3Qtd2VpZ2h0Jyk/LnZhbHVlKXx8MDsKICAgIHZhciBxID0gMTsKICAgIHZhciBxaSA9IHJvdy5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC1xdWFudGl0eScpOwogICAgaWYocWkgJiYgcWkudmFsdWUudHJpbSgpIT09JycpIHEgPSBwYXJzZUludChxaS52YWx1ZSl8fDA7CiAgICB2YXIgc3ViID0gdyAqIHE7CiAgICB0b3RhbEcgKz0gc3ViOyBpdGVtcyArPSBxOwogICAgdmFyIHNlID0gcm93LnF1ZXJ5U2VsZWN0b3IoJy5wcm9kdWN0LXN1YnRvdGFsJyk7CiAgICBpZihzZSkgc2UudGV4dENvbnRlbnQgPSAn0JLRgNGBINC/0L7Qt9C40YbQuNC4OiAnK3N1YisnINCzJzsKICB9KTsKICBpZihpdCAmJiByb3dzLmxlbmd0aD4wKSB0b3RhbEcgKz0gdHc7CiAgdmFyIGtnID0gdG90YWxHLzEwMDA7CiAgdG90YWxXLnRleHRDb250ZW50ID0gdG90YWxHPj0xMDAwID8gKGtnLnRvRml4ZWQoMikrJyDQutCzJykgOiAodG90YWxHKycg0LMnKTsKICB0b3RhbEkudGV4dENvbnRlbnQgPSBpdGVtcysnINGI0YIuJzsKICB0b3RhbEMudGV4dENvbnRlbnQgPSAoa2cqZHIgKyBrZypjcikudG9GaXhlZCgyKSsnIOKCuSc7Cn07'));
-            // loadData
             var loadData = eval(atob('dmFyIGxvYWREYXRhID0gZnVuY3Rpb24oZCl7CiAgZGVsUmF0ZS52YWx1ZSA9IGQuZGVsaXZlcnlSYXRlfHw1MDA7CiAgY2FyZ29SLnZhbHVlID0gZC5jYXJnb1JhdGV8fDA7CiAgaW5jVGFyZS5jaGVja2VkID0gZC5pbmNsdWRlVGFyZXx8ZmFsc2U7CiAgdGFyZVcudmFsdWUgPSBkLnRhcmVXZWlnaHR8fDIwMDsKCiAgcHJvZENvbnRhaW5lci5pbm5lckhUTUwgPSAnJzsKICBwcm9kdWN0Q291bnRlciA9IDE7CgogIGlmKGQucHJvZHVjdHMgJiYgQXJyYXkuaXNBcnJheShkLnByb2R1Y3RzKSAmJiBkLnByb2R1Y3RzLmxlbmd0aCA+IDApewogICAgZC5wcm9kdWN0cy5mb3JFYWNoKGZ1bmN0aW9uKHApewogICAgICB2YXIgZGl2ID0gXzAuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgICAgIGRpdi5jbGFzc05hbWUgPSAncHJvZHVjdC1yb3cnOwogICAgICB2YXIgbmFtZSA9IChwLm5hbWV8fCcnKS5yZXBsYWNlKC8iL2csICcmcXVvdDsnKTsKICAgICAgdmFyIHdlaWdodCA9IHAud2VpZ2h0fHwwOwogICAgICB2YXIgcXVhbnRpdHkgPSBwLnF1YW50aXR5fHwxOwogICAgICB2YXIgc3VidG90YWwgPSB3ZWlnaHQgKiBxdWFudGl0eTsKICAgICAgZGl2LmlubmVySFRNTCA9ICc8ZGl2IGNsYXNzPSJwcm9kdWN0LW51bWJlciI+Jytwcm9kdWN0Q291bnRlcisnPC9kaXY+JysKICAgICAgICAnPGRpdiBjbGFzcz0icHJvZHVjdC1maWVsZHMiPicrCiAgICAgICAgJzxpbnB1dCB0eXBlPSJ0ZXh0IiBjbGFzcz0icHJvZHVjdC1uYW1lIiB2YWx1ZT0iJytuYW1lKyciIHBsYWNlaG9sZGVyPSLQndCw0LfQstCw0L3QuNC1INGC0L7QstCw0YDQsCI+JysKICAgICAgICAnPGlucHV0IHR5cGU9Im51bWJlciIgY2xhc3M9InByb2R1Y3Qtd2VpZ2h0IiB2YWx1ZT0iJyt3ZWlnaHQrJyIgcGxhY2Vob2xkZXI9ItCS0LXRgSAo0LMpIiBtaW49IjAiIHN0ZXA9IjEiPicrCiAgICAgICAgJzxpbnB1dCB0eXBlPSJudW1iZXIiIGNsYXNzPSJwcm9kdWN0LXF1YW50aXR5IiB2YWx1ZT0iJytxdWFudGl0eSsnIiBwbGFjZWhvbGRlcj0i0JrQvtC7LdCy0L4iIG1pbj0iMSIgc3RlcD0iMSI+JysKICAgICAgICAnPC9kaXY+JysKICAgICAgICAnPGRpdiBjbGFzcz0icHJvZHVjdC1zdWJ0b3RhbCI+0JLRgNGBINC/0L7Qt9C40YbQuNC4OiAnK3N1YnRvdGFsKycg0LM8L2Rpdj4nKwogICAgICAgICc8YnV0dG9uIGNsYXNzPSJyZW1vdmUtYnRuIj7inJw8L2J1dHRvbj4nOwogICAgICBwcm9kQ29udGFpbmVyLmFwcGVuZENoaWxkKGRpdik7CiAgICAgIGRpdi5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC1uYW1lJykuYWRkRXZlbnRMaXN0ZW5lcihfNiwgY2FsY3VsYXRlVG90YWwpOwogICAgICBkaXYucXVlcnlTZWxlY3RvcignLnByb2R1Y3Qtd2VpZ2h0JykuYWRkRXZlbnRMaXN0ZW5lcihfNywgY2FsY3VsYXRlVG90YWwpOwogICAgICBkaXYucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtcXVhbnRpdHknKS5hZGRFdmVudExpc3RlbmVyKF83LCBjYWxjdWxhdGVUb3RhbCk7CiAgICAgIGRpdi5xdWVyeVNlbGVjdG9yKCcucmVtb3ZlLWJ0bicpLmFkZEV2ZW50TGlzdGVuZXIoXzUsIGZ1bmN0aW9uKCl7CiAgICAgICAgdGhpcy5wYXJlbnRFbGVtZW50LnJlbW92ZSgpOwogICAgICAgIGNhbGN1bGF0ZVRvdGFsKCk7CiAgICAgIH0pOwogICAgICBwcm9kdWN0Q291bnRlcisrOwogICAgfSk7CiAgfSBlbHNlIHsKICAgIHNob3dOb3RpZign0J3QtdGCINC00LDQvdC90YvRhSDQviDRgtC+0LLQsNGA0LDRhScpOwogICAgYWRkUHJvZHVjdCgpOwogICAgcmV0dXJuOwogIH0KICBjYWxjdWxhdGVUb3RhbCgpOwogIHNldFRpbWVvdXQoZnVuY3Rpb24oKXsgY2FsY3VsYXRlVG90YWwoKTsgfSwgMTAwKTsKfTs='));
-            // getCurrData
             var getCurrData = eval(atob('dmFyIGdldEN1cnJEYXRhID0gZnVuY3Rpb24oKXsKICB2YXIgcHJvZHMgPSBbXTsKICAkJCgnLnByb2R1Y3Qtcm93JykuZm9yRWFjaChmdW5jdGlvbihyb3csaSl7CiAgICB2YXIgcWkgPSByb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtcXVhbnRpdHknKTsgdmFyIHE9MTsKICAgIGlmKHFpICYmIHFpLnZhbHVlLnRyaW0oKSE9PScnKSBxID0gcGFyc2VJbnQocWkudmFsdWUpfHwwOwogICAgcHJvZHMucHVzaCh7bnVtYmVyOmkrMSwgbmFtZTpyb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtbmFtZScpPy52YWx1ZXx8JycsIHdlaWdodDpwYXJzZUZsb2F0KHJvdy5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC13ZWlnaHQnKT8udmFsdWUpfHwwLCBxdWFudGl0eTpxfSk7CiAgfSk7CiAgcmV0dXJuIHtwcm9kdWN0czpwcm9kcywgZGVsaXZlcnlSYXRlOnBhcnNlRmxvYXQoZGVsUmF0ZS52YWx1ZSl8fDAsIGNhcmdvUmF0ZTpwYXJzZUZsb2F0KGNhcmdvUi52YWx1ZSl8fDAsIGluY2x1ZGVUYXJlOmluY1RhcmUuY2hlY2tlZCwgdGFyZVdlaWdodDp0YXJlVy52YWx1ZX07Cn07'));
-            // saveToHistory (основная логика)
             var saveToHistory = eval(atob('dmFyIHNhdmVUb0hpc3RvcnkgPSBmdW5jdGlvbigpewogIHZhciBwbiA9IGdldFBrZ051bSgpOyB2YXIgZGF0YSA9IGdldEN1cnJEYXRhKCk7IHZhciBoaXN0ID0gZ2V0SGlzdCgpOwogIHZhciBpZHggPSBoaXN0LmZpbmRJbmRleChmdW5jdGlvbihoKXsgcmV0dXJuIGgucGFja2FnZU51bWJlcj09PXBuOyB9KTsKICB2YXIgZW50cnkgPSB7aWQ6RGF0ZS5ub3coKSwgcGFja2FnZU51bWJlcjpwbiwgZGF0ZTpuZXcgRGF0ZSgpLnRvTG9jYWxlU3RyaW5nKCdydS1SVScpLCB0aW1lc3RhbXA6bmV3IERhdGUoKS50b0lTT1N0cmluZygpLCB0b3RhbFdlaWdodDp0b3RhbFcudGV4dENvbnRlbnQsIHRvdGFsSXRlbXM6dG90YWxJLnRleHRDb250ZW50LCB0b3RhbENvc3Q6dG90YWxDLnRleHRDb250ZW50LCBkYXRhOmRhdGF9OwogIGlmKGlkeD49MCkgaGlzdFtpZHhdPWVudHJ5OyBlbHNlIGhpc3QucHVzaChlbnRyeSk7CiAgc2F2ZUhpc3RMUyhoaXN0KTsgc2hvd05vdGlmKCfQodC+0YXRgNCw0L3QtdC90L4g0LIg0LjRgdGC0L7RgNC40Y4hIPCfkr4nKTsKfTs='));
 
             _0.addEventListener('DOMContentLoaded', function(){

@@ -164,7 +164,11 @@
         .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#1e293b; color:white; padding:12px 28px; border-radius:50px; opacity:0; transition:opacity 0.5s; z-index:999; }
         .toast.show { opacity:1; }
         .file-input-hidden { display:none; }
-        @media print { .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section { display: none !important; } .calc-container { box-shadow: none; padding: 0; } }
+        @media print {
+            body { background: white; }
+            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section { display: none !important; }
+            .calc-container { box-shadow: none; padding: 0; }
+        }
     </style>
 </head>
 <body>
@@ -274,12 +278,6 @@
     <div id="notification" class="notification"></div>
     <div id="toast" class="toast">✅ Сохранено</div>
 
-    <!-- ========== БИБЛИОТЕКА jsPDF (минифицированная, правильная) ========== -->
-    <script>
-        /*! jsPDF 2.5.1 - https://github.com/parallax/jsPDF */
-        (function(){var jsPDF=function(){function t(e,n,r,i){this.__private__={},this.__private__.pdfVersion="1.3",this.__private__.page=0,this.__private__.pages=[],this.__private__.currentPage={},this.__private__.buffer="",this.__private__.fonts={},this.__private__.fontSize=16,this.__private__.fontFamily="helvetica",this.__private__.lineHeight=1.15,this.__private__.textColor="#000000",this.__private__.drawColor="#000000",this.__private__.fillColor="#000000",this.__private__.lineWidth=0.200025,this.__private__.pageWidth=595.28,this.__private__.pageHeight=841.89,this.__private__.scaleFactor=1,this.__private__.orientation="portrait",this.__private__.layout="A4",this.__private__.autoSize=!1,this.__private__.autoSizeOptions={}}return t.prototype.text=function(t,e,n){this.__private__.buffer+=t+"\n"},t.prototype.save=function(t){var e=this.__private__.buffer;this.__private__.buffer="";var n="%PDF-1.3\n%âãÏÓ\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> >>\nendobj\n4 0 obj\n<< /Length "+e.length+" >>\nstream\n"+e+"\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000210 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n"+String(e.length+300)+"\n%%EOF";var r=new Blob([n],{type:"application/pdf"});if(t){var i=URL.createObjectURL(r);var o=document.createElement("a");o.href=i;o.download=t;o.click();URL.revokeObjectURL(i)}return r},t}();window.jsPDF=jsPDF;})();
-    </script>
-
     <script>
         // Service Worker для офлайн-кеширования
         if ('serviceWorker' in navigator) {
@@ -306,7 +304,7 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // ====================== ОБФУСЦИРОВАННЫЙ JS С ИСПРАВЛЕННОЙ PDF-ФУНКЦИЕЙ ======================
+        // ====================== ОБФУСЦИРОВАННЫЙ JS (с печатью вместо PDF) ======================
         (function(){
             var _0 = document;
             var $ = _0.querySelector.bind(_0);
@@ -461,32 +459,30 @@
                 closeHistBtn.addEventListener(_5, function(){ histModal[_4][_a](_2); });
                 function closeHist(){ histModal[_4][_a](_2); }
 
-                // === ФУНКЦИЯ PDF (правильный вызов конструктора) ===
+                // ======= ОТКРЫТИЕ ОКНА ПЕЧАТИ (КАЛЬКУЛЯТОР) =======
                 exportPdfBtn.addEventListener(_5, function(){
-                    showNotif('Создаётся PDF...');
-                    setTimeout(function(){
-                        var doc = new jsPDF();
-                        doc.text('Посылка: ' + getPkgNum(), 20, 20);
-                        doc.text('Дата: ' + new Date().toLocaleString('ru-RU'), 20, 30);
-                        doc.text('Общий вес: ' + totalW.textContent, 20, 40);
-                        doc.text('Товаров: ' + totalI.textContent, 20, 50);
-                        doc.text('Стоимость: ' + totalC.textContent, 20, 60);
-                        doc.text('Товары:', 20, 80);
-                        var y = 90;
-                        $$('.product-row').forEach(function(row, i){
-                            var name = row.querySelector('.product-name')?.value || '';
-                            var weight = row.querySelector('.product-weight')?.value || '0';
-                            var qty = row.querySelector('.product-quantity')?.value || '1';
-                            var sub = row.querySelector('.product-subtotal')?.textContent || '';
-                            doc.text((i+1)+'. '+name+' | '+weight+'г x '+qty+' = '+sub, 20, y);
-                            y += 10;
-                        });
-                        doc.save('Посылка_'+getPkgNum()+'.pdf');
-                        showNotif('PDF сохранён! 📄');
-                    }, 100);
+                    var w = window.open('', '_blank', 'width=600,height=400');
+                    w.document.write('<html><head><meta charset="UTF-8"><title>Печать посылки</title></head><body style="font-family:sans-serif; padding:20px;">');
+                    w.document.write('<h2>Посылка: ' + getPkgNum() + '</h2>');
+                    w.document.write('<p>Дата: ' + new Date().toLocaleString('ru-RU') + '</p>');
+                    w.document.write('<p>Общий вес: ' + totalW.textContent + '</p>');
+                    w.document.write('<p>Товаров: ' + totalI.textContent + '</p>');
+                    w.document.write('<p>Стоимость: ' + totalC.textContent + '</p>');
+                    w.document.write('<h3>Товары:</h3><ol>');
+                    $$('.product-row').forEach(function(row){
+                        var name = row.querySelector('.product-name')?.value || '';
+                        var weight = row.querySelector('.product-weight')?.value || '0';
+                        var qty = row.querySelector('.product-quantity')?.value || '1';
+                        var sub = row.querySelector('.product-subtotal')?.textContent || '';
+                        w.document.write('<li>' + name + ' | ' + weight + 'г x ' + qty + ' = ' + sub + '</li>');
+                    });
+                    w.document.write('</ol></body></html>');
+                    w.document.close();
+                    w.print();
+                    showNotif('Окно печати открыто');
                 });
 
-                // Бланк заказа (прежняя логика)
+                // Бланк заказа (без изменений, кроме PDF-кнопки)
                 var orders=[], currentOrderId=null, saveTimeout=null;
                 var ordNum = $('#'+'orderNumber');
                 var persCode = $('#'+'personalCode');
@@ -607,34 +603,32 @@
                     reader.readAsText(file); e.target.value='';
                 });
 
-                // Кнопка PDF в бланке заказа
+                // Кнопка PDF в бланке заказа (открытие печати)
                 $('#'+'exportPdfBtn2').addEventListener(_5, function(){
                     if(!currentOrderId){ showToast('⚠️ Выберите заказ'); return; }
                     var o = orders.find(function(o){ return o.id===currentOrderId; });
                     if(!o) return;
-                    showToast('Создаётся PDF заказа...');
-                    setTimeout(function(){
-                        var doc = new jsPDF();
-                        doc.text('Бланк заказа: ' + (o.orderNumber||''), 20, 20);
-                        doc.text('Дата: ' + new Date().toLocaleString('ru-RU'), 20, 30);
-                        doc.text('Личный код: ' + (o.personalCode||''), 20, 40);
-                        doc.text('Страна: ' + (o.country||''), 20, 50);
-                        doc.text('Тип авто: ' + (o.carType||''), 20, 60);
-                        doc.text('Тариф: ' + (o.tariff||''), 20, 70);
-                        var pack = (o.packaging||[]).join(', ') + (o.otherPackText?' + '+o.otherPackText:'');
-                        doc.text('Упаковка: ' + pack, 20, 80);
-                        doc.text('Страховка: ' + (o.insurance==='need'?'Нужна ('+o.insuranceSum+')':'Не нужна'), 20, 90);
-                        doc.text('Треки:', 20, 110);
-                        var y = 120;
-                        (o.tracks||[]).forEach(function(t,i){
-                            if(t.track || t.product){
-                                doc.text((i+1)+'. '+(t.track||'---')+' - '+(t.product||''), 20, y);
-                                y += 8;
-                            }
-                        });
-                        doc.save('Заказ_'+(o.orderNumber||'')+'.pdf');
-                        showToast('PDF заказа сохранён! 📄');
-                    }, 100);
+                    var w = window.open('', '_blank', 'width=600,height=400');
+                    w.document.write('<html><head><meta charset="UTF-8"><title>Печать заказа</title></head><body style="font-family:sans-serif; padding:20px;">');
+                    w.document.write('<h2>Бланк заказа: ' + (o.orderNumber||'') + '</h2>');
+                    w.document.write('<p>Дата: ' + new Date().toLocaleString('ru-RU') + '</p>');
+                    w.document.write('<p>Личный код: ' + (o.personalCode||'') + '</p>');
+                    w.document.write('<p>Страна: ' + (o.country||'') + '</p>');
+                    w.document.write('<p>Тип авто: ' + (o.carType||'') + '</p>');
+                    w.document.write('<p>Тариф: ' + (o.tariff||'') + '</p>');
+                    var pack = (o.packaging||[]).join(', ') + (o.otherPackText?' + '+o.otherPackText:'');
+                    w.document.write('<p>Упаковка: ' + pack + '</p>');
+                    w.document.write('<p>Страховка: ' + (o.insurance==='need'?'Нужна ('+o.insuranceSum+')':'Не нужна') + '</p>');
+                    w.document.write('<h3>Треки:</h3><ol>');
+                    (o.tracks||[]).forEach(function(t,i){
+                        if(t.track || t.product){
+                            w.document.write('<li>' + (t.track||'---') + ' - ' + (t.product||'') + '</li>');
+                        }
+                    });
+                    w.document.write('</ol></body></html>');
+                    w.document.close();
+                    w.print();
+                    showToast('Окно печати открыто');
                 });
 
                 ordNum.addEventListener(_6, autoSave); persCode.addEventListener(_6, autoSave); country.addEventListener(_6, autoSave); carType.addEventListener(_7, autoSave); tariff.addEventListener(_6, autoSave);

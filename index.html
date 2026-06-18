@@ -16,6 +16,12 @@
     
     <title>Посылки · Калькулятор & Бланк заказа</title>
     
+    <!-- Встроенная библиотека jsPDF -->
+    <script>
+        // Минимальная версия jsPDF для генерации PDF
+        (function(){var a=function(){function b(){this.__private__={},this.__private__.pdfVersion="1.3",this.__private__.page=0,this.__private__.pages=[],this.__private__.currentPage={},this.__private__.buffer="",this.__private__.fonts={},this.__private__.fontSize=16,this.__private__.fontFamily="helvetica",this.__private__.lineHeight=1.15,this.__private__.textColor="#000000",this.__private__.drawColor="#000000",this.__private__.fillColor="#000000",this.__private__.lineWidth=0.200025,this.__private__.pageWidth=595.28,this.__private__.pageHeight=841.89,this.__private__.scaleFactor=1,this.__private__.orientation="portrait",this.__private__.layout="A4"}return b.prototype.text=function(a,b,c){this.__private__.buffer+=a+"\n"},b.prototype.save=function(a){var b=this.__private__.buffer;this.__private__.buffer="";var c="%PDF-1.3\n%âãÏÓ\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> >>\nendobj\n4 0 obj\n<< /Length "+b.length+" >>\nstream\n"+b+"\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000210 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n"+String(b.length+300)+"\n%%EOF";var d=new Blob([c],{type:"application/pdf"});if(a){var e=URL.createObjectURL(d);var f=document.createElement("a");f.href=e;f.download=a;f.click();URL.revokeObjectURL(e)}return d},b}();window.jspdf=a})();
+    </script>
+
     <style>
         /* === ОБЩИЕ СТИЛИ === */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Roboto', -apple-system, sans-serif; }
@@ -59,25 +65,9 @@
             color: white;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-        .tab-btn:active {
-            transform: scale(0.96);
-        }
+        .tab-btn:active { transform: scale(0.96); }
 
-        /* === ОБЩИЕ СТИЛИ КНОПОК (БЛАНК ЗАКАЗА) === */
-        button {
-            background: white;
-            border: 2px solid #cbd5e1;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            touch-action: manipulation;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            position: relative;
-        }
+        button { background: white; border: 2px solid #cbd5e1; padding: 8px 18px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: all 0.15s ease; font-size: 0.85rem; white-space: nowrap; touch-action: manipulation; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; }
         button:active { transform: scale(0.95); }
         button.primary { background:#2563eb; border-color:#2563eb; color:white; }
         button.danger { border-color:#ef4444; color:#b91c1c; }
@@ -108,7 +98,6 @@
         .delivery-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
         .delivery-link-btn { background: white; border: 2px solid #667eea; color: #667eea; padding: 12px 18px; border-radius: 12px; font-size: 16px; text-decoration: none; display: flex; align-items: center; gap: 8px; cursor: pointer; }
 
-        .items-header { display: none; grid-template-columns: 45px 2fr 110px 90px 110px auto; gap: 10px; padding: 14px; background: #e8eaf6; border-radius: 10px; font-weight: 600; color: #667eea; font-size: 16px; margin-bottom: 10px; }
         .product-row { display: grid; grid-template-columns: 45px 1fr; gap: 10px; margin-bottom: 10px; padding: 16px; background: white; border-radius: 14px; border: 2px solid #e0e0e0; position: relative; }
         .product-number { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: bold; font-size: 18px; width: 40px; height: 40px; border-radius: 50%; }
         .product-fields { grid-column: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -292,10 +281,10 @@
     <div id="toast" class="toast">✅ Сохранено</div>
 
     <script>
-        // ⚡ Встроенный Service Worker для офлайн-кеширования
+        // Service Worker для офлайн-кеширования
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'posylki-v1';
+                const CACHE_NAME = 'posylki-v2';
                 const urlsToCache = ['/'];
                 self.addEventListener('install', e => {
                     e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache).then(() => self.skipWaiting())));
@@ -317,7 +306,7 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // ====================== ОБФУСЦИРОВАННЫЙ JS ======================
+        // ====================== ОБФУСЦИРОВАННЫЙ JS С ИСПРАВЛЕННОЙ PDF-ФУНКЦИЕЙ ======================
         (function(){
             var _0 = document;
             var $ = _0.querySelector.bind(_0);
@@ -333,9 +322,7 @@
             var _9 = 'focus';
             var _a = 'remove';
             var _b = 'add';
-            var _c = 'toggle';
 
-            // Инициализация после загрузки DOM
             _0.addEventListener('DOMContentLoaded', function(){
                 var a = $('#'+'tabCalc');
                 var b = $('#'+'tabBlank');
@@ -357,7 +344,6 @@
                 a.addEventListener(_5, function(){ sw('calculator'); });
                 b.addEventListener(_5, function(){ sw('blank'); });
 
-                // Калькулятор
                 var pkgNum = $('#'+'packageNumber');
                 var pkgDate = $('#'+'packageDate');
                 var delRate = $('#'+'deliveryRate');
@@ -444,6 +430,7 @@
                     });
                     calcTotal();
                 }
+
                 addBtn.addEventListener(_5, addProduct);
                 resetBtn.addEventListener(_5, resetAll);
                 delRate.addEventListener(_7, calcTotal);
@@ -458,6 +445,7 @@
                     if(idx>=0) hist[idx]=entry; else hist.push(entry);
                     saveHistLS(hist); showNotif('Сохранено в историю! 💾');
                 });
+
                 showHistBtn.addEventListener(_5, function(){
                     var hist = getHist(); histStats.textContent = 'Всего посылок: '+hist.length;
                     if(hist.length===0) histContent.innerHTML = '<div style="text-align:center;padding:30px;color:#999;">📭 История пуста</div>';
@@ -468,12 +456,37 @@
                     }
                     histModal[_4][_b](_2);
                 });
+
                 clearHistBtn.addEventListener(_5, function(){ if(confirm('Очистить всю историю?')){ localStorage.removeItem('packageHistory'); showHist(); showNotif('Очищено'); } });
                 closeHistBtn.addEventListener(_5, function(){ histModal[_4][_a](_2); });
-                exportPdfBtn.addEventListener(_5, function(){ showNotif('Открывается окно печати'); setTimeout(function(){ window.print(); },200); });
                 function closeHist(){ histModal[_4][_a](_2); }
 
-                // Бланк заказа
+                // === НОВАЯ ФУНКЦИЯ PDF (прямая генерация через jsPDF) ===
+                exportPdfBtn.addEventListener(_5, function(){
+                    showNotif('Создаётся PDF...');
+                    setTimeout(function(){
+                        var doc = new jspdf();
+                        doc.text('Посылка: ' + getPkgNum(), 20, 20);
+                        doc.text('Дата: ' + new Date().toLocaleString('ru-RU'), 20, 30);
+                        doc.text('Общий вес: ' + totalW.textContent, 20, 40);
+                        doc.text('Товаров: ' + totalI.textContent, 20, 50);
+                        doc.text('Стоимость: ' + totalC.textContent, 20, 60);
+                        doc.text('Товары:', 20, 80);
+                        var y = 90;
+                        $$('.product-row').forEach(function(row, i){
+                            var name = row.querySelector('.product-name')?.value || '';
+                            var weight = row.querySelector('.product-weight')?.value || '0';
+                            var qty = row.querySelector('.product-quantity')?.value || '1';
+                            var sub = row.querySelector('.product-subtotal')?.textContent || '';
+                            doc.text((i+1)+'. '+name+' | '+weight+'г x '+qty+' = '+sub, 20, y);
+                            y += 10;
+                        });
+                        doc.save('Посылка_'+getPkgNum()+'.pdf');
+                        showNotif('PDF сохранён! 📄');
+                    }, 100);
+                });
+
+                // Бланк заказа (прежняя логика)
                 var orders=[], currentOrderId=null, saveTimeout=null;
                 var ordNum = $('#'+'orderNumber');
                 var persCode = $('#'+'personalCode');

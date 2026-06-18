@@ -80,7 +80,7 @@
             display: flex; 
             flex-wrap: wrap; 
             gap: 14px; 
-            margin-top: 20px;   /* добавлен отступ сверху */
+            margin-top: 20px; 
             margin-bottom: 20px; 
         }
         .save-load-section .btn { flex: 1; min-width: 140px; }
@@ -132,12 +132,59 @@
         .form-row { margin-bottom:16px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
         .form-row label { width:130px; font-weight:600; color:#0f172a; }
         input, select { flex:1; padding:8px 12px; border:1px solid #cbd5e1; border-radius:16px; font-size:0.9rem; min-width:120px; background:white; }
-        .checkbox-group { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0; }
-        .checkbox-group label { display:flex; align-items:center; gap:6px; cursor:pointer; padding:8px 14px; border-radius:20px; border:2px solid #e2e8f0; background:white; font-weight:500; font-size:0.9rem; user-select:none; outline: none !important; }
-        .checkbox-group label.active-blue { background: #dbeafe; border-color: #2563eb; }
-        .checkbox-group label.active-green { background: #dcfce7; border-color: #16a34a; }
-        .checkbox-group label.active-purple { background: #ede9fe; border-color: #7c3aed; }
-        .checkbox-group label.active-orange { background: #fef3c7; border-color: #d97706; }
+
+        /* === Упаковка: вертикальная раскладка === */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 6px 0;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            transition: all 0.15s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            user-select: none;
+            outline: none !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            width: fit-content;
+            min-width: auto;
+            justify-content: flex-start;
+        }
+        .checkbox-group label:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .checkbox-group label:active { transform: scale(0.97); background: #f1f5f9; }
+        .checkbox-group label:focus,
+        .checkbox-group label:focus-visible,
+        .checkbox-group label:focus-within {
+            outline: none !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+            border-color: #e2e8f0 !important;
+            background: white !important;
+        }
+        .checkbox-group label.active-blue { background: #dbeafe; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
+        .checkbox-group label.active-green { background: #dcfce7; border-color: #16a34a; box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2); }
+        .checkbox-group label.active-purple { background: #ede9fe; border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2); }
+        .checkbox-group label.active-orange { background: #fef3c7; border-color: #d97706; box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2); }
+        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; flex: 0 0 auto; cursor: pointer; accent-color: #2563eb; }
+        .checkbox-group input[type="text"] {
+            flex: 0 1 auto;
+            width: 100%;
+            max-width: 250px;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
         .tracks-table-wrapper { overflow-x:auto; margin:20px 0 10px; }
         table { width:100%; border-collapse:collapse; font-size:0.75rem; }
         th, td { border:1px solid #cbd5e1; padding:8px 6px; text-align:left; }
@@ -146,9 +193,14 @@
         .toast.show { opacity:1; }
         .file-input-hidden { display:none; }
 
+        .pdf-row {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
         @media print {
             body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, .toast, .file-input-hidden { display: none !important; }
+            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, .toast, .file-input-hidden, .pdf-row { display: none !important; }
             .calc-container { box-shadow: none; padding: 0; }
             .package-header { background: linear-gradient(135deg, #667eea, #764ba2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .section { background: #f8f9fa !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -166,6 +218,7 @@
         </div>
 
         <div class="tool-panel active" id="calcPanel">
+            <!-- Калькулятор без изменений -->
             <div class="calc-container">
                 <div class="package-header">
                     <h1>📦 Калькулятор посылок</h1>
@@ -195,7 +248,6 @@
                     </div>
                 </div>
 
-                <!-- Итоговая панель -->
                 <div class="summary">
                     <div><div class="summary-label">📊 Общий вес</div><div class="summary-value" id="totalWeight">0 г</div></div>
                     <div><div class="summary-label">📋 Товаров</div><div class="summary-value" id="totalItems">0 шт.</div></div>
@@ -221,14 +273,17 @@
             </div>
         </div>
 
+        <!-- БЛАНК ЗАКАЗА с вертикальной упаковкой -->
         <div class="tool-panel" id="blankPanel">
             <div class="blank-header">
                 <div class="header-left"><h1 class="blank-title">📦 Бланк заказа</h1></div>
                 <div class="header-right">
                     <button id="newOrderBtn" class="primary">➕ Новый</button>
                     <button id="deleteOrderBtn" class="danger">🗑 Удалить</button>
-                    <button id="exportPdfBtn2" class="btn-pdf">📄 PDF</button>
                 </div>
+            </div>
+            <div class="pdf-row">
+                <button id="exportPdfBtn2" class="btn-pdf">📄 PDF</button>
             </div>
             <div class="two-columns">
                 <div class="orders-list"><h3>📋 Мои заказы <span id="ordersCount">(0)</span></h3><div id="ordersContainer"></div></div>
@@ -239,13 +294,14 @@
                     <div class="form-row"><label>Страна получения:</label><input type="text" id="country" placeholder="Германия, Польша..."></div>
                     <div class="form-row"><label>Тип авто:</label><select id="carType"><option value="Быстрое">🚀 Быстрое</option><option value="Медленное">🐢 Медленное</option></select></div>
                     <div class="form-row"><label>Тариф:</label><input type="text" id="tariff" placeholder="Эконом / Стандарт / Экспресс"></div>
-                    <div class="form-row"><label>Упаковка:</label>
+                    <div class="form-row">
+                        <label>Упаковка:</label>
                         <div class="checkbox-group" id="packagingGroup">
                             <label><input type="checkbox" name="packaging" value="Мешок"> Мешок</label>
                             <label><input type="checkbox" name="packaging" value="Коробка"> Коробка</label>
                             <label><input type="checkbox" name="packaging" value="Уголки"> Уголки</label>
                             <label><input type="checkbox" name="packaging" value="Обрешетка"> Обрешетка</label>
-                            <input type="text" id="otherPack" placeholder="Другое" style="width:100px;">
+                            <input type="text" id="otherPack" placeholder="Другое">
                         </div>
                     </div>
                     <div class="form-row"><label>Страховка:</label>
@@ -263,7 +319,7 @@
     <div id="toast" class="toast">✅ Сохранено</div>
 
     <script>
-        // Service Worker
+        // Service Worker (без изменений)
         if ('serviceWorker' in navigator) {
             const swCode = `
                 const CACHE_NAME = 'posylki-v3';

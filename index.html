@@ -76,7 +76,13 @@
 
         .buttons-section { display: flex; flex-wrap: wrap; gap: 14px; margin: 20px 0; }
         .buttons-section .btn { flex: 1; min-width: 140px; }
-        .save-load-section { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; }
+        .save-load-section { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 14px; 
+            margin-top: 20px;   /* добавлен отступ сверху */
+            margin-bottom: 20px; 
+        }
         .save-load-section .btn { flex: 1; min-width: 140px; }
         .btn { padding: 18px 24px; border: none; border-radius: 14px; font-size: 18px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .add-btn { background: #4CAF50; color: white; }
@@ -189,16 +195,17 @@
                     </div>
                 </div>
 
-                <div class="save-load-section">
-                    <button class="btn save-btn" id="saveToHistoryBtn">💾 Сохранить</button>
-                    <button class="btn history-btn" id="showHistoryBtn">📂 История</button>
-                    <button class="btn pdf-btn" id="exportToPDFBtn">📄 PDF</button>
-                </div>
-
+                <!-- Итоговая панель -->
                 <div class="summary">
                     <div><div class="summary-label">📊 Общий вес</div><div class="summary-value" id="totalWeight">0 г</div></div>
                     <div><div class="summary-label">📋 Товаров</div><div class="summary-value" id="totalItems">0 шт.</div></div>
                     <div><div class="summary-label">💰 Стоимость</div><div class="summary-value" id="totalCost">0 ₽</div></div>
+                </div>
+
+                <div class="save-load-section">
+                    <button class="btn save-btn" id="saveToHistoryBtn">💾 Сохранить</button>
+                    <button class="btn history-btn" id="showHistoryBtn">📂 История</button>
+                    <button class="btn pdf-btn" id="exportToPDFBtn">📄 PDF</button>
                 </div>
             </div>
             <div id="historyModal" class="modal">
@@ -220,10 +227,6 @@
                 <div class="header-right">
                     <button id="newOrderBtn" class="primary">➕ Новый</button>
                     <button id="deleteOrderBtn" class="danger">🗑 Удалить</button>
-                    <button id="exportSingleBtn" class="purple">💾 Экспорт тек.</button>
-                    <button id="exportAllBtn" class="success">💾 Экспорт всех</button>
-                    <button id="importBtn" class="warning">📂 Импорт</button>
-                    <input type="file" id="fileInput" class="file-input-hidden" accept=".json">
                     <button id="exportPdfBtn2" class="btn-pdf">📄 PDF</button>
                 </div>
             </div>
@@ -285,7 +288,7 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // === Основной обфусцированный код с зашифрованными функциями (исправлено) ===
+        // ====================== ОБФУСЦИРОВАННЫЙ JS ======================
         (function(){
             var _0 = document;
             var $ = _0.querySelector.bind(_0);
@@ -301,32 +304,26 @@
             var _a = 'remove';
             var _b = 'add';
 
-            // Расшифровка и выполнение критичных функций – ИСПРАВЛЕНО: eval без присваивания
-            eval(atob('dmFyIGNhbGN1bGF0ZVRvdGFsID0gZnVuY3Rpb24oKXsKICB2YXIgZHIgPSBwYXJzZUZsb2F0KGRlbFJhdGUudmFsdWUpfHwwOwogIHZhciBjciA9IHBhcnNlRmxvYXQoY2FyZ29SLnZhbHVlKXx8MDsKICB2YXIgaXQgPSBpbmNUYXJlLmNoZWNrZWQ7CiAgdmFyIHR3ID0gcGFyc2VGbG9hdCh0YXJlVy52YWx1ZSl8fDA7CiAgdmFyIHRvdGFsRyA9IDAsIGl0ZW1zID0gMDsKICB2YXIgcm93cyA9ICQkKCcucHJvZHVjdC1yb3cnKTsKICByb3dzLmZvckVhY2goZnVuY3Rpb24ocm93KXsKICAgIHZhciB3ID0gcGFyc2VGbG9hdChyb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3Qtd2VpZ2h0Jyk/LnZhbHVlKXx8MDsKICAgIHZhciBxID0gMTsKICAgIHZhciBxaSA9IHJvdy5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC1xdWFudGl0eScpOwogICAgaWYocWkgJiYgcWkudmFsdWUudHJpbSgpIT09JycpIHEgPSBwYXJzZUludChxaS52YWx1ZSl8fDA7CiAgICB2YXIgc3ViID0gdyAqIHE7CiAgICB0b3RhbEcgKz0gc3ViOyBpdGVtcyArPSBxOwogICAgdmFyIHNlID0gcm93LnF1ZXJ5U2VsZWN0b3IoJy5wcm9kdWN0LXN1YnRvdGFsJyk7CiAgICBpZihzZSkgc2UudGV4dENvbnRlbnQgPSAn0JLRgNGBINC/0L7Qt9C40YbQuNC4OiAnK3N1YisnINCzJzsKICB9KTsKICBpZihpdCAmJiByb3dzLmxlbmd0aD4wKSB0b3RhbEcgKz0gdHc7CiAgdmFyIGtnID0gdG90YWxHLzEwMDA7CiAgdG90YWxXLnRleHRDb250ZW50ID0gdG90YWxHPj0xMDAwID8gKGtnLnRvRml4ZWQoMikrJyDQutCzJykgOiAodG90YWxHKycg0LMnKTsKICB0b3RhbEkudGV4dENvbnRlbnQgPSBpdGVtcysnINGI0YIuJzsKICB0b3RhbEMudGV4dENvbnRlbnQgPSAoa2cqZHIgKyBrZypjcikudG9GaXhlZCgyKSsnIOKCuSc7Cn07'));
-            eval(atob('dmFyIGxvYWREYXRhID0gZnVuY3Rpb24oZCl7CiAgZGVsUmF0ZS52YWx1ZSA9IGQuZGVsaXZlcnlSYXRlfHw1MDA7CiAgY2FyZ29SLnZhbHVlID0gZC5jYXJnb1JhdGV8fDA7CiAgaW5jVGFyZS5jaGVja2VkID0gZC5pbmNsdWRlVGFyZXx8ZmFsc2U7CiAgdGFyZVcudmFsdWUgPSBkLnRhcmVXZWlnaHR8fDIwMDsKCiAgcHJvZENvbnRhaW5lci5pbm5lckhUTUwgPSAnJzsKICBwcm9kdWN0Q291bnRlciA9IDE7CgogIGlmKGQucHJvZHVjdHMgJiYgQXJyYXkuaXNBcnJheShkLnByb2R1Y3RzKSAmJiBkLnByb2R1Y3RzLmxlbmd0aCA+IDApewogICAgZC5wcm9kdWN0cy5mb3JFYWNoKGZ1bmN0aW9uKHApewogICAgICB2YXIgZGl2ID0gXzAuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgICAgIGRpdi5jbGFzc05hbWUgPSAncHJvZHVjdC1yb3cnOwogICAgICB2YXIgbmFtZSA9IChwLm5hbWV8fCcnKS5yZXBsYWNlKC8iL2csICcmcXVvdDsnKTsKICAgICAgdmFyIHdlaWdodCA9IHAud2VpZ2h0fHwwOwogICAgICB2YXIgcXVhbnRpdHkgPSBwLnF1YW50aXR5fHwxOwogICAgICB2YXIgc3VidG90YWwgPSB3ZWlnaHQgKiBxdWFudGl0eTsKICAgICAgZGl2LmlubmVySFRNTCA9ICc8ZGl2IGNsYXNzPSJwcm9kdWN0LW51bWJlciI+Jytwcm9kdWN0Q291bnRlcisnPC9kaXY+JysKICAgICAgICAnPGRpdiBjbGFzcz0icHJvZHVjdC1maWVsZHMiPicrCiAgICAgICAgJzxpbnB1dCB0eXBlPSJ0ZXh0IiBjbGFzcz0icHJvZHVjdC1uYW1lIiB2YWx1ZT0iJytuYW1lKyciIHBsYWNlaG9sZGVyPSLQndCw0LfQstCw0L3QuNC1INGC0L7QstCw0YDQsCI+JysKICAgICAgICAnPGlucHV0IHR5cGU9Im51bWJlciIgY2xhc3M9InByb2R1Y3Qtd2VpZ2h0IiB2YWx1ZT0iJyt3ZWlnaHQrJyIgcGxhY2Vob2xkZXI9ItCS0LXRgSAo0LMpIiBtaW49IjAiIHN0ZXA9IjEiPicrCiAgICAgICAgJzxpbnB1dCB0eXBlPSJudW1iZXIiIGNsYXNzPSJwcm9kdWN0LXF1YW50aXR5IiB2YWx1ZT0iJytxdWFudGl0eSsnIiBwbGFjZWhvbGRlcj0i0JrQvtC7LdCy0L4iIG1pbj0iMSIgc3RlcD0iMSI+JysKICAgICAgICAnPC9kaXY+JysKICAgICAgICAnPGRpdiBjbGFzcz0icHJvZHVjdC1zdWJ0b3RhbCI+0JLRgNGBINC/0L7Qt9C40YbQuNC4OiAnK3N1YnRvdGFsKycg0LM8L2Rpdj4nKwogICAgICAgICc8YnV0dG9uIGNsYXNzPSJyZW1vdmUtYnRuIj7inJw8L2J1dHRvbj4nOwogICAgICBwcm9kQ29udGFpbmVyLmFwcGVuZENoaWxkKGRpdik7CiAgICAgIGRpdi5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC1uYW1lJykuYWRkRXZlbnRMaXN0ZW5lcihfNiwgY2FsY3VsYXRlVG90YWwpOwogICAgICBkaXYucXVlcnlTZWxlY3RvcignLnByb2R1Y3Qtd2VpZ2h0JykuYWRkRXZlbnRMaXN0ZW5lcihfNywgY2FsY3VsYXRlVG90YWwpOwogICAgICBkaXYucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtcXVhbnRpdHknKS5hZGRFdmVudExpc3RlbmVyKF83LCBjYWxjdWxhdGVUb3RhbCk7CiAgICAgIGRpdi5xdWVyeVNlbGVjdG9yKCcucmVtb3ZlLWJ0bicpLmFkZEV2ZW50TGlzdGVuZXIoXzUsIGZ1bmN0aW9uKCl7CiAgICAgICAgdGhpcy5wYXJlbnRFbGVtZW50LnJlbW92ZSgpOwogICAgICAgIGNhbGN1bGF0ZVRvdGFsKCk7CiAgICAgIH0pOwogICAgICBwcm9kdWN0Q291bnRlcisrOwogICAgfSk7CiAgfSBlbHNlIHsKICAgIHNob3dOb3RpZign0J3QtdGCINC00LDQvdC90YvRhSDQviDRgtC+0LLQsNGA0LDRhScpOwogICAgYWRkUHJvZHVjdCgpOwogICAgcmV0dXJuOwogIH0KICBjYWxjdWxhdGVUb3RhbCgpOwogIHNldFRpbWVvdXQoZnVuY3Rpb24oKXsgY2FsY3VsYXRlVG90YWwoKTsgfSwgMTAwKTsKfTs='));
-            eval(atob('dmFyIGdldEN1cnJEYXRhID0gZnVuY3Rpb24oKXsKICB2YXIgcHJvZHMgPSBbXTsKICAkJCgnLnByb2R1Y3Qtcm93JykuZm9yRWFjaChmdW5jdGlvbihyb3csaSl7CiAgICB2YXIgcWkgPSByb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtcXVhbnRpdHknKTsgdmFyIHE9MTsKICAgIGlmKHFpICYmIHFpLnZhbHVlLnRyaW0oKSE9PScnKSBxID0gcGFyc2VJbnQocWkudmFsdWUpfHwwOwogICAgcHJvZHMucHVzaCh7bnVtYmVyOmkrMSwgbmFtZTpyb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtbmFtZScpPy52YWx1ZXx8JycsIHdlaWdodDpwYXJzZUZsb2F0KHJvdy5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC13ZWlnaHQnKT8udmFsdWUpfHwwLCBxdWFudGl0eTpxfSk7CiAgfSk7CiAgcmV0dXJuIHtwcm9kdWN0czpwcm9kcywgZGVsaXZlcnlSYXRlOnBhcnNlRmxvYXQoZGVsUmF0ZS52YWx1ZSl8fDAsIGNhcmdvUmF0ZTpwYXJzZUZsb2F0KGNhcmdvUi52YWx1ZSl8fDAsIGluY2x1ZGVUYXJlOmluY1RhcmUuY2hlY2tlZCwgdGFyZVdlaWdodDp0YXJlVy52YWx1ZX07Cn07'));
-            eval(atob('dmFyIHNhdmVUb0hpc3RvcnkgPSBmdW5jdGlvbigpewogIHZhciBwbiA9IGdldFBrZ051bSgpOyB2YXIgZGF0YSA9IGdldEN1cnJEYXRhKCk7IHZhciBoaXN0ID0gZ2V0SGlzdCgpOwogIHZhciBpZHggPSBoaXN0LmZpbmRJbmRleChmdW5jdGlvbihoKXsgcmV0dXJuIGgucGFja2FnZU51bWJlcj09PXBuOyB9KTsKICB2YXIgZW50cnkgPSB7aWQ6RGF0ZS5ub3coKSwgcGFja2FnZU51bWJlcjpwbiwgZGF0ZTpuZXcgRGF0ZSgpLnRvTG9jYWxlU3RyaW5nKCdydS1SVScpLCB0aW1lc3RhbXA6bmV3IERhdGUoKS50b0lTT1N0cmluZygpLCB0b3RhbFdlaWdodDp0b3RhbFcudGV4dENvbnRlbnQsIHRvdGFsSXRlbXM6dG90YWxJLnRleHRDb250ZW50LCB0b3RhbENvc3Q6dG90YWxDLnRleHRDb250ZW50LCBkYXRhOmRhdGF9OwogIGlmKGlkeD49MCkgaGlzdFtpZHhdPWVudHJ5OyBlbHNlIGhpc3QucHVzaChlbnRyeSk7CiAgc2F2ZUhpc3RMUyhoaXN0KTsgc2hvd05vdGlmKCfQodC+0YXRgNCw0L3QtdC90L4g0LIg0LjRgdGC0L7RgNC40Y4hIPCfkr4nKTsKfTs='));
-
             _0.addEventListener('DOMContentLoaded', function(){
-                var tabCalc = $('#'+'tabCalc');
-                var tabBlank = $('#'+'tabBlank');
-                var calcPanel = $('#'+'calcPanel');
-                var blankPanel = $('#'+'blankPanel');
+                var a = $('#'+'tabCalc');
+                var b = $('#'+'tabBlank');
+                var cP = $('#'+'calcPanel');
+                var bP = $('#'+'blankPanel');
 
-                function switchTool(t){
-                    [calcPanel, blankPanel].forEach(function(p){ p[_4][_a](_1); });
-                    [tabCalc, tabBlank].forEach(function(btn){ btn[_4][_a](_1); });
+                function sw(t){
+                    [cP,bP].forEach(function(p){ p[_4][_a](_1); });
+                    [a,b].forEach(function(btn){ btn[_4][_a](_1); });
                     if(t==='calculator'){
-                        calcPanel[_4][_b](_1); tabCalc[_4][_b](_1);
+                        cP[_4][_b](_1); a[_4][_b](_1);
                         updatePackageDate();
                     } else {
-                        blankPanel[_4][_b](_1); tabBlank[_4][_b](_1);
+                        bP[_4][_b](_1); b[_4][_b](_1);
                         renderOrdersList();
                     }
                 }
 
-                tabCalc.addEventListener(_5, function(){ switchTool('calculator'); });
-                tabBlank.addEventListener(_5, function(){ switchTool('blank'); });
+                a.addEventListener(_5, function(){ sw('calculator'); });
+                b.addEventListener(_5, function(){ sw('blank'); });
 
                 // ---------- КАЛЬКУЛЯТОР ----------
                 var pkgNum = $('#'+'packageNumber');
@@ -356,6 +353,30 @@
                 function getPkgNum(){ if(!pkgNum.value.trim()) pkgNum.value = genPkgNum(); return pkgNum.value.trim(); }
                 function updatePackageDate(){ if(pkgDate) pkgDate.textContent = '📅 '+new Date().toLocaleString('ru-RU'); }
 
+                function calculateTotal(){
+                    var dr = parseFloat(delRate.value)||0;
+                    var cr = parseFloat(cargoR.value)||0;
+                    var it = incTare.checked;
+                    var tw = parseFloat(tareW.value)||0;
+                    var totalG = 0, items = 0;
+                    var rows = $$('.product-row');
+                    rows.forEach(function(row){
+                        var w = parseFloat(row.querySelector('.product-weight')?.value)||0;
+                        var q = 1;
+                        var qi = row.querySelector('.product-quantity');
+                        if(qi && qi.value.trim()!=='') q = parseInt(qi.value)||0;
+                        var sub = w*q;
+                        totalG += sub; items += q;
+                        var se = row.querySelector('.product-subtotal');
+                        if(se) se.textContent = 'Вес позиции: '+sub+' г';
+                    });
+                    if(it && rows.length>0) totalG += tw;
+                    var kg = totalG/1000;
+                    totalW.textContent = totalG>=1000 ? (kg.toFixed(2)+' кг') : (totalG+' г');
+                    totalI.textContent = items+' шт.';
+                    totalC.textContent = (kg*dr + kg*cr).toFixed(2)+' ₽';
+                }
+
                 function addProduct(){
                     var n = productCounter++;
                     var div = _0.createElement('div'); div.className = 'product-row';
@@ -367,10 +388,66 @@
                     div.querySelector('.remove-btn').addEventListener(_5, function(){ this.parentElement.remove(); calculateTotal(); });
                     calculateTotal();
                 }
+
                 function resetAll(){ if(confirm('Очистить все товары?')){ prodContainer.innerHTML=''; productCounter=1; calculateTotal(); } }
                 function showNotif(msg){ notif.textContent=msg; notif[_4][_b](_2); setTimeout(function(){ notif[_4][_a](_2); },2000); }
                 function getHist(){ return JSON.parse(localStorage.getItem('packageHistory')||'[]'); }
                 function saveHistLS(h){ localStorage.setItem('packageHistory', JSON.stringify(h)); }
+
+                function getCurrData(){
+                    var prods = [];
+                    $$('.product-row').forEach(function(row,i){
+                        var qi = row.querySelector('.product-quantity'); var q=1;
+                        if(qi && qi.value.trim()!=='') q=parseInt(qi.value)||0;
+                        prods.push({number:i+1, name:row.querySelector('.product-name')?.value||'', weight:parseFloat(row.querySelector('.product-weight')?.value)||0, quantity:q});
+                    });
+                    return {products:prods, deliveryRate:parseFloat(delRate.value)||0, cargoRate:parseFloat(cargoR.value)||0, includeTare:incTare.checked, tareWeight:tareW.value};
+                }
+
+                function loadData(d){
+                    delRate.value = d.deliveryRate||500; cargoR.value = d.cargoRate||0; incTare.checked = d.includeTare||false; tareW.value = d.tareWeight||200;
+                    prodContainer.innerHTML=''; productCounter=1;
+                    if(d.products && Array.isArray(d.products) && d.products.length > 0){
+                        d.products.forEach(function(p){
+                            var div = _0.createElement('div'); div.className = 'product-row';
+                            var name = (p.name||'').replace(/"/g, '&quot;');
+                            var weight = p.weight||0;
+                            var quantity = p.quantity||1;
+                            var subtotal = weight * quantity;
+                            div.innerHTML = '<div class="product-number">'+productCounter+'</div>'+
+                                '<div class="product-fields">'+
+                                '<input type="text" class="product-name" value="'+name+'" placeholder="Название товара">'+
+                                '<input type="number" class="product-weight" value="'+weight+'" placeholder="Вес (г)" min="0" step="1">'+
+                                '<input type="number" class="product-quantity" value="'+quantity+'" placeholder="Кол-во" min="1" step="1">'+
+                                '</div>'+
+                                '<div class="product-subtotal">Вес позиции: '+subtotal+' г</div>'+
+                                '<button class="remove-btn">✕</button>';
+                            prodContainer.appendChild(div);
+                            div.querySelector('.product-name').addEventListener(_6, calculateTotal);
+                            div.querySelector('.product-weight').addEventListener(_7, calculateTotal);
+                            div.querySelector('.product-quantity').addEventListener(_7, calculateTotal);
+                            div.querySelector('.remove-btn').addEventListener(_5, function(){
+                                this.parentElement.remove();
+                                calculateTotal();
+                            });
+                            productCounter++;
+                        });
+                    } else {
+                        showNotif('Нет данных о товарах');
+                        addProduct();
+                        return;
+                    }
+                    calculateTotal();
+                    setTimeout(function(){ calculateTotal(); }, 100);
+                }
+
+                function saveToHistory(){
+                    var pn = getPkgNum(); var data = getCurrData(); var hist = getHist();
+                    var idx = hist.findIndex(function(h){ return h.packageNumber===pn; });
+                    var entry = {id:Date.now(), packageNumber:pn, date:new Date().toLocaleString('ru-RU'), timestamp:new Date().toISOString(), totalWeight:totalW.textContent, totalItems:totalI.textContent, totalCost:totalC.textContent, data:data};
+                    if(idx>=0) hist[idx]=entry; else hist.push(entry);
+                    saveHistLS(hist); showNotif('Сохранено в историю! 💾');
+                }
 
                 addBtn.addEventListener(_5, addProduct);
                 resetBtn.addEventListener(_5, resetAll);
@@ -559,26 +636,6 @@
                 $('#'+'deleteOrderBtn').addEventListener(_5, function(){
                     if(!currentOrderId){ showToast('⚠️ Выберите заказ'); return; }
                     if(confirm('Удалить?')){ orders=orders.filter(function(o){ return o.id!==currentOrderId; }); currentOrderId=null; saveOrders(); if(orders.length>0) selectOrder(orders[0].id); else clearForm(); showToast('🗑 Заказ удалён'); }
-                });
-                $('#'+'exportSingleBtn').addEventListener(_5, function(){
-                    if(!currentOrderId){ showToast('⚠️ Выберите заказ'); return; }
-                    var o=orders.find(function(o){ return o.id===currentOrderId; }); if(o){ var blob=new Blob([JSON.stringify(o,null,2)],{type:'application/json'}); var a=_0.createElement('a'); a.href=URL.createObjectURL(blob); a.download='order-'+(o.orderNumber||o.id)+'.json'; a.click(); URL.revokeObjectURL(a.href); showToast('💾 Заказ экспортирован'); }
-                });
-                $('#'+'exportAllBtn').addEventListener(_5, function(){
-                    if(!orders.length){ showToast('⚠️ Нет заказов'); return; }
-                    var blob=new Blob([JSON.stringify(orders,null,2)],{type:'application/json'}); var a=_0.createElement('a'); a.href=URL.createObjectURL(blob); a.download='all-orders.json'; a.click(); URL.revokeObjectURL(a.href); showToast('💾 Все заказы экспортированы');
-                });
-                $('#'+'importBtn').addEventListener(_5, function(){ $('#'+'fileInput').click(); });
-                $('#'+'fileInput').addEventListener(_7, function(e){
-                    var file=e.target.files[0]; if(!file) return;
-                    var reader=new FileReader(); reader.onload=function(ev){
-                        try{
-                            var data=JSON.parse(ev.target.result);
-                            if(Array.isArray(data)){ if(confirm('Импортировать '+data.length+' заказов?')){ data.forEach(function(item){ item.id=item.id||Date.now()+Math.random(); var ex=orders.findIndex(function(o){ return o.id===item.id; }); if(ex>=0) orders[ex]=item; else orders.push(item); }); saveOrders(); if(orders.length>0) selectOrder(orders[orders.length-1].id); showToast('📂 Заказы импортированы'); } }
-                            else { if(confirm('Импортировать 1 заказ?')){ data.id=data.id||Date.now(); var ex=orders.findIndex(function(o){ return o.id===data.id; }); if(ex>=0) orders[ex]=data; else orders.push(data); saveOrders(); selectOrder(data.id); showToast('📂 Заказ импортирован'); } }
-                        }catch(err){ showToast('❌ Ошибка импорта'); }
-                    };
-                    reader.readAsText(file); e.target.value='';
                 });
 
                 // PDF бланка (цветной)

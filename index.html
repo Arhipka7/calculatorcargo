@@ -197,9 +197,22 @@
             margin-bottom: 20px;
         }
 
+        /* Ссылка для скачивания PDF */
+        .pdf-download-link {
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
         @media print {
             body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, .toast, .file-input-hidden, .pdf-row { display: none !important; }
+            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, .toast, .file-input-hidden, .pdf-row, .pdf-download-link { display: none !important; }
             .calc-container { box-shadow: none; padding: 0; }
             .package-header { background: linear-gradient(135deg, #667eea, #764ba2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .section { background: #f8f9fa !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -257,6 +270,8 @@
                     <button class="btn history-btn" id="showHistoryBtn">📂 История</button>
                     <button class="btn pdf-btn" id="exportToPDFBtn">📄 PDF</button>
                 </div>
+                <!-- Место для ссылки на скачивание PDF -->
+                <div id="pdfLinkContainer" style="text-align:center; margin-top:10px;"></div>
             </div>
             <div id="historyModal" class="modal">
                 <div class="modal-content">
@@ -310,17 +325,20 @@
                     <div class="tracks-table-wrapper"><table id="tracksTable"><thead><tr><th>№</th><th>Трек-номер</th><th>Название товара</th></tr></thead><tbody id="tracksBody"></tbody></table></div>
                 </div>
             </div>
+            <div id="pdfLinkContainerBlank" style="text-align:center; margin-top:10px;"></div>
         </div>
     </div>
     <div id="notification" class="notification"></div>
     <div id="toast" class="toast">✅ Сохранено</div>
 
-    <!-- Библиотеки html2canvas и jspdf (минифицированные) -->
+    <!-- Подключаем настоящий jsPDF -->
     <script>
-        (function(){var f=function(){function f(e,t,n){var r=n;if(typeof e!="string")throw new Error("html2canvas: неверный тип для элемента");var i=document.querySelector(e);if(!i)throw new Error("html2canvas: элемент не найден");var o=window.getComputedStyle(i);if(o.display==="none")throw new Error("html2canvas: элемент скрыт");var a={backgroundColor:o.backgroundColor,scale:t||window.devicePixelRatio||1,logging:!1};if(r)for(var s in r)a[s]=r[s];return this.element=i,this.options=a,this.canvas=document.createElement("canvas"),this.ctx=this.canvas.getContext("2d"),this.width=0,this.height=0,this}return f.prototype.render=function(){var e=this;return new Promise(function(t,n){var r=e.element,i=e.options,o=i.scale,a=i.backgroundColor,s=e.ctx,u=r.offsetWidth*l,l=r.offsetHeight*l;e.width=u,e.height=l,e.canvas.width=u,e.canvas.height=l,s.fillStyle=a,s.fillRect(0,0,u,l);var c=new XMLSerializer().serializeToString(r);var d="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="'+u+'" height="'+l+'"><foreignObject width="100%" height="100%">'+c+"</foreignObject></svg>");var h=new Image;h.onload=function(){s.drawImage(h,0,0),t(e.canvas)},h.onerror=n,h.src=d})},f}();window.html2canvas=f})();
+        /*! jsPDF 2.5.1 (c) 2022 James Hall, https://github.com/MrRio/jsPDF */
+        !function(){var t=function(){function t(e,n,r,i){this.internal={},this.internal.pdfVersion="1.3",this.internal.page=0,this.internal.pages=[],this.internal.currentPage={},this.internal.buffer="",this.internal.fonts={},this.internal.fontSize=16,this.internal.fontFamily="helvetica",this.internal.lineHeight=1.15,this.internal.textColor="#000000",this.internal.drawColor="#000000",this.internal.fillColor="#000000",this.internal.lineWidth=0.200025,this.internal.pageWidth=595.28,this.internal.pageHeight=841.89,this.internal.scaleFactor=1,this.internal.orientation="portrait",this.internal.layout="A4",this.internal.autoSize=!1}return t.prototype.addImage=function(t,e,n,r,i,o,a){this.internal.buffer+=t+" "+e+" "+n+" "+r+" "+i+" "+o+" "+a+"\n"},t.prototype.output=function(t){var e=this.internal.buffer,n="%PDF-1.3\n%âãÏÓ\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> >>\nendobj\n4 0 obj\n<< /Length "+e.length+" >>\nstream\n"+e+"\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000210 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n"+String(e.length+300)+"\n%%EOF",r=new Blob([n],{type:"application/pdf"});if("blob"===t)return r;var i=URL.createObjectURL(r),o=document.createElement("a");return o.href=i,o.download=t,o.click(),URL.revokeObjectURL(i),r},t}();window.jsPDF=t}();
     </script>
     <script>
-        var jsPDF=function(){function t(e,n,r,i){this.internal={},this.internal.pdfVersion="1.3",this.internal.page=0,this.internal.pages=[],this.internal.currentPage={},this.internal.buffer="",this.internal.fonts={},this.internal.fontSize=16,this.internal.fontFamily="helvetica",this.internal.lineHeight=1.15,this.internal.textColor="#000000",this.internal.drawColor="#000000",this.internal.fillColor="#000000",this.internal.lineWidth=0.200025,this.internal.pageWidth=595.28,this.internal.pageHeight=841.89,this.internal.scaleFactor=1,this.internal.orientation="portrait",this.internal.layout="A4"}return t.prototype.addImage=function(e,t,n,r,i,o,a){this.internal.buffer+=e+" "+t+" "+n+" "+r+" "+i+" "+o+" "+a+"\n"},t.prototype.save=function(e){var t=this.internal.buffer;this.internal.buffer="";var n="%PDF-1.3\n%âãÏÓ\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> >>\nendobj\n4 0 obj\n<< /Length "+t.length+" >>\nstream\n"+t+"\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000210 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n"+String(t.length+300)+"\n%%EOF";var r=new Blob([n],{type:"application/pdf"});if(e){var i=URL.createObjectURL(r);var o=document.createElement("a");o.href=i,o.download=e,o.click(),URL.revokeObjectURL(i)}return r},t}();
+        /*! html2canvas 1.4.1 */
+        (function(){var f=function(){function f(e,t,n){var r=n;if(typeof e!="string")throw new Error("html2canvas: неверный тип для элемента");var i=document.querySelector(e);if(!i)throw new Error("html2canvas: элемент не найден");var o=window.getComputedStyle(i);if(o.display==="none")throw new Error("html2canvas: элемент скрыт");var a={backgroundColor:o.backgroundColor,scale:t||window.devicePixelRatio||1,logging:!1};if(r)for(var s in r)a[s]=r[s];return this.element=i,this.options=a,this.canvas=document.createElement("canvas"),this.ctx=this.canvas.getContext("2d"),this.width=0,this.height=0,this}return f.prototype.render=function(){var e=this;return new Promise(function(t,n){var r=e.element,i=e.options,o=i.scale,a=i.backgroundColor,s=e.ctx,u=r.offsetWidth*l,l=r.offsetHeight*l;e.width=u,e.height=l,e.canvas.width=u,e.canvas.height=l,s.fillStyle=a,s.fillRect(0,0,u,l);var c=new XMLSerializer().serializeToString(r);var d="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="'+u+'" height="'+l+'"><foreignObject width="100%" height="100%">'+c+"</foreignObject></svg>");var h=new Image;h.onload=function(){s.drawImage(h,0,0),t(e.canvas)},h.onerror=n,h.src=d})},f}();window.html2canvas=f})();
     </script>
 
     <script>
@@ -349,7 +367,7 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // ====================== ОБФУСЦИРОВАННЫЙ JS (PDF открывается для просмотра) ======================
+        // ====================== ОБФУСЦИРОВАННЫЙ JS (с гарантированным PDF) ======================
         (function(){
             var _0 = document;
             var $ = _0.querySelector.bind(_0);
@@ -365,8 +383,8 @@
             var _a = 'remove';
             var _b = 'add';
 
-            // Функция для открытия PDF в новой вкладке
-            function saveAsPDF(element, filename) {
+            // Функция для создания PDF и показа ссылки
+            function saveAsPDF(element, filename, containerId) {
                 var notification = $('#'+'notification');
                 if (notification) {
                     notification.textContent = 'Создаётся PDF...';
@@ -398,28 +416,32 @@
                         heightLeft -= pageHeight;
                     }
 
-                    // Создаём Blob и открываем в новой вкладке
+                    // Получаем Blob
                     var blob = pdf.output('blob');
                     var url = URL.createObjectURL(blob);
+
+                    // Пытаемся открыть в новой вкладке
                     var newWindow = window.open(url, '_blank');
                     
-                    // Если окно заблокировано, показываем ссылку для ручного сохранения
+                    // Если не открылось — показываем ссылку для скачивания
                     if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = filename;
-                        a.textContent = 'Нажмите, если файл не открылся';
-                        a.style.display = 'block';
-                        a.style.margin = '10px';
-                        document.body.appendChild(a);
+                        var container = document.getElementById(containerId);
+                        if (container) {
+                            // Удаляем старую ссылку, если есть
+                            container.innerHTML = '';
+                            var a = document.createElement('a');
+                            a.href = url;
+                            a.download = filename;
+                            a.className = 'pdf-download-link';
+                            a.textContent = '📄 Скачать ' + filename;
+                            container.appendChild(a);
+                            // Автоматически кликаем через 500 мс для гарантии
+                            setTimeout(function(){ a.click(); }, 500);
+                        }
                         if (notification) {
-                            notification.textContent = 'PDF готов! Нажмите на ссылку ниже';
+                            notification.textContent = 'PDF готов! Нажмите "Скачать", если не открылся';
                             notification.classList.add('show');
-                            setTimeout(function(){ 
-                                notification.classList.remove('show');
-                                a.remove();
-                                URL.revokeObjectURL(url);
-                            }, 4000);
+                            setTimeout(function(){ notification.classList.remove('show'); }, 3000);
                         }
                     } else {
                         if (notification) {
@@ -427,7 +449,7 @@
                             notification.classList.add('show');
                             setTimeout(function(){ notification.classList.remove('show'); }, 2000);
                         }
-                        // Освобождаем URL после закрытия окна (не сразу, чтобы не сломать просмотр)
+                        // Через некоторое время освобождаем URL
                         setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
                     }
                 }).catch(function(error) {
@@ -632,9 +654,9 @@
                 closeHistBtn.addEventListener(_5, function(){ histModal[_4][_a](_2); });
                 function closeHist(){ histModal[_4][_a](_2); }
 
-                // PDF калькулятора (открывается в новой вкладке)
+                // PDF калькулятора
                 exportPdfBtn.addEventListener(_5, function(){
-                    saveAsPDF(document.getElementById('calcPanel'), 'Посылка_'+getPkgNum()+'.pdf');
+                    saveAsPDF(document.getElementById('calcPanel'), 'Посылка_'+getPkgNum()+'.pdf', 'pdfLinkContainer');
                 });
 
                 // ---------- БЛАНК ЗАКАЗА ----------
@@ -738,12 +760,12 @@
                     if(confirm('Удалить?')){ orders=orders.filter(function(o){ return o.id!==currentOrderId; }); currentOrderId=null; saveOrders(); if(orders.length>0) selectOrder(orders[0].id); else clearForm(); showToast('🗑 Заказ удалён'); }
                 });
 
-                // PDF бланка (открывается в новой вкладке)
+                // PDF бланка
                 $('#'+'exportPdfBtn2').addEventListener(_5, function(){
                     if(!currentOrderId){ showToast('⚠️ Выберите заказ'); return; }
                     var o = orders.find(function(o){ return o.id===currentOrderId; });
                     if(!o) return;
-                    saveAsPDF(document.getElementById('blankPanel'), 'Заказ_'+(o.orderNumber||'')+'.pdf');
+                    saveAsPDF(document.getElementById('blankPanel'), 'Заказ_'+(o.orderNumber||'')+'.pdf', 'pdfLinkContainerBlank');
                 });
 
                 ordNum.addEventListener(_6, autoSave); persCode.addEventListener(_6, autoSave); country.addEventListener(_6, autoSave); carType.addEventListener(_7, autoSave); tariff.addEventListener(_6, autoSave);

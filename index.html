@@ -17,6 +17,7 @@
     <title>Посылки · Калькулятор & Бланк заказа</title>
     
     <style>
+        /* (ваши стили без изменений) */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Roboto', -apple-system, sans-serif; }
         body { background: #f1f5f9; padding: 15px; min-height: 100vh; min-height: 100dvh; }
         .app-container { max-width: 1400px; margin: 0 auto; }
@@ -285,6 +286,17 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
+        // === Защита от отладки ===
+        (function() {
+            setInterval(function() {
+                // Обнаружение открытых DevTools по разнице размеров окна
+                if (window.outerWidth - window.innerWidth > 100 || window.outerHeight - window.innerHeight > 100) {
+                    document.body.innerHTML = '<div style="text-align:center;margin-top:50px;font-size:20px;">Пожалуйста, закройте инструменты разработчика</div>';
+                }
+            }, 1000);
+        })();
+
+        // === Основной обфусцированный код с зашифрованными функциями ===
         (function(){
             var _0 = document;
             var $ = _0.querySelector.bind(_0);
@@ -299,6 +311,16 @@
             var _8 = 'blur';
             var _a = 'remove';
             var _b = 'add';
+
+            // Расшифровка и выполнение критичных функций
+            // calculateTotal
+            var calculateTotal = eval(atob('dmFyIGNhbGN1bGF0ZVRvdGFsID0gZnVuY3Rpb24oKXsKICB2YXIgZHIgPSBwYXJzZUZsb2F0KGRlbFJhdGUudmFsdWUpfHwwOwogIHZhciBjciA9IHBhcnNlRmxvYXQoY2FyZ29SLnZhbHVlKXx8MDsKICB2YXIgaXQgPSBpbmNUYXJlLmNoZWNrZWQ7CiAgdmFyIHR3ID0gcGFyc2VGbG9hdCh0YXJlVy52YWx1ZSl8fDA7CiAgdmFyIHRvdGFsRyA9IDAsIGl0ZW1zID0gMDsKICB2YXIgcm93cyA9ICQkKCcucHJvZHVjdC1yb3cnKTsKICByb3dzLmZvckVhY2goZnVuY3Rpb24ocm93KXsKICAgIHZhciB3ID0gcGFyc2VGbG9hdChyb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3Qtd2VpZ2h0Jyk/LnZhbHVlKXx8MDsKICAgIHZhciBxID0gMTsKICAgIHZhciBxaSA9IHJvdy5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC1xdWFudGl0eScpOwogICAgaWYocWkgJiYgcWkudmFsdWUudHJpbSgpIT09JycpIHEgPSBwYXJzZUludChxaS52YWx1ZSl8fDA7CiAgICB2YXIgc3ViID0gdyAqIHE7CiAgICB0b3RhbEcgKz0gc3ViOyBpdGVtcyArPSBxOwogICAgdmFyIHNlID0gcm93LnF1ZXJ5U2VsZWN0b3IoJy5wcm9kdWN0LXN1YnRvdGFsJyk7CiAgICBpZihzZSkgc2UudGV4dENvbnRlbnQgPSAn0JLRgNGBINC/0L7Qt9C40YbQuNC4OiAnK3N1YisnINCzJzsKICB9KTsKICBpZihpdCAmJiByb3dzLmxlbmd0aD4wKSB0b3RhbEcgKz0gdHc7CiAgdmFyIGtnID0gdG90YWxHLzEwMDA7CiAgdG90YWxXLnRleHRDb250ZW50ID0gdG90YWxHPj0xMDAwID8gKGtnLnRvRml4ZWQoMikrJyDQutCzJykgOiAodG90YWxHKycg0LMnKTsKICB0b3RhbEkudGV4dENvbnRlbnQgPSBpdGVtcysnINGI0YIuJzsKICB0b3RhbEMudGV4dENvbnRlbnQgPSAoa2cqZHIgKyBrZypjcikudG9GaXhlZCgyKSsnIOKCuSc7Cn07'));
+            // loadData
+            var loadData = eval(atob('dmFyIGxvYWREYXRhID0gZnVuY3Rpb24oZCl7CiAgZGVsUmF0ZS52YWx1ZSA9IGQuZGVsaXZlcnlSYXRlfHw1MDA7CiAgY2FyZ29SLnZhbHVlID0gZC5jYXJnb1JhdGV8fDA7CiAgaW5jVGFyZS5jaGVja2VkID0gZC5pbmNsdWRlVGFyZXx8ZmFsc2U7CiAgdGFyZVcudmFsdWUgPSBkLnRhcmVXZWlnaHR8fDIwMDsKCiAgcHJvZENvbnRhaW5lci5pbm5lckhUTUwgPSAnJzsKICBwcm9kdWN0Q291bnRlciA9IDE7CgogIGlmKGQucHJvZHVjdHMgJiYgQXJyYXkuaXNBcnJheShkLnByb2R1Y3RzKSAmJiBkLnByb2R1Y3RzLmxlbmd0aCA+IDApewogICAgZC5wcm9kdWN0cy5mb3JFYWNoKGZ1bmN0aW9uKHApewogICAgICB2YXIgZGl2ID0gXzAuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgICAgIGRpdi5jbGFzc05hbWUgPSAncHJvZHVjdC1yb3cnOwogICAgICB2YXIgbmFtZSA9IChwLm5hbWV8fCcnKS5yZXBsYWNlKC8iL2csICcmcXVvdDsnKTsKICAgICAgdmFyIHdlaWdodCA9IHAud2VpZ2h0fHwwOwogICAgICB2YXIgcXVhbnRpdHkgPSBwLnF1YW50aXR5fHwxOwogICAgICB2YXIgc3VidG90YWwgPSB3ZWlnaHQgKiBxdWFudGl0eTsKICAgICAgZGl2LmlubmVySFRNTCA9ICc8ZGl2IGNsYXNzPSJwcm9kdWN0LW51bWJlciI+Jytwcm9kdWN0Q291bnRlcisnPC9kaXY+JysKICAgICAgICAnPGRpdiBjbGFzcz0icHJvZHVjdC1maWVsZHMiPicrCiAgICAgICAgJzxpbnB1dCB0eXBlPSJ0ZXh0IiBjbGFzcz0icHJvZHVjdC1uYW1lIiB2YWx1ZT0iJytuYW1lKyciIHBsYWNlaG9sZGVyPSLQndCw0LfQstCw0L3QuNC1INGC0L7QstCw0YDQsCI+JysKICAgICAgICAnPGlucHV0IHR5cGU9Im51bWJlciIgY2xhc3M9InByb2R1Y3Qtd2VpZ2h0IiB2YWx1ZT0iJyt3ZWlnaHQrJyIgcGxhY2Vob2xkZXI9ItCS0LXRgSAo0LMpIiBtaW49IjAiIHN0ZXA9IjEiPicrCiAgICAgICAgJzxpbnB1dCB0eXBlPSJudW1iZXIiIGNsYXNzPSJwcm9kdWN0LXF1YW50aXR5IiB2YWx1ZT0iJytxdWFudGl0eSsnIiBwbGFjZWhvbGRlcj0i0JrQvtC7LdCy0L4iIG1pbj0iMSIgc3RlcD0iMSI+JysKICAgICAgICAnPC9kaXY+JysKICAgICAgICAnPGRpdiBjbGFzcz0icHJvZHVjdC1zdWJ0b3RhbCI+0JLRgNGBINC/0L7Qt9C40YbQuNC4OiAnK3N1YnRvdGFsKycg0LM8L2Rpdj4nKwogICAgICAgICc8YnV0dG9uIGNsYXNzPSJyZW1vdmUtYnRuIj7inJw8L2J1dHRvbj4nOwogICAgICBwcm9kQ29udGFpbmVyLmFwcGVuZENoaWxkKGRpdik7CiAgICAgIGRpdi5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC1uYW1lJykuYWRkRXZlbnRMaXN0ZW5lcihfNiwgY2FsY3VsYXRlVG90YWwpOwogICAgICBkaXYucXVlcnlTZWxlY3RvcignLnByb2R1Y3Qtd2VpZ2h0JykuYWRkRXZlbnRMaXN0ZW5lcihfNywgY2FsY3VsYXRlVG90YWwpOwogICAgICBkaXYucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtcXVhbnRpdHknKS5hZGRFdmVudExpc3RlbmVyKF83LCBjYWxjdWxhdGVUb3RhbCk7CiAgICAgIGRpdi5xdWVyeVNlbGVjdG9yKCcucmVtb3ZlLWJ0bicpLmFkZEV2ZW50TGlzdGVuZXIoXzUsIGZ1bmN0aW9uKCl7CiAgICAgICAgdGhpcy5wYXJlbnRFbGVtZW50LnJlbW92ZSgpOwogICAgICAgIGNhbGN1bGF0ZVRvdGFsKCk7CiAgICAgIH0pOwogICAgICBwcm9kdWN0Q291bnRlcisrOwogICAgfSk7CiAgfSBlbHNlIHsKICAgIHNob3dOb3RpZign0J3QtdGCINC00LDQvdC90YvRhSDQviDRgtC+0LLQsNGA0LDRhScpOwogICAgYWRkUHJvZHVjdCgpOwogICAgcmV0dXJuOwogIH0KICBjYWxjdWxhdGVUb3RhbCgpOwogIHNldFRpbWVvdXQoZnVuY3Rpb24oKXsgY2FsY3VsYXRlVG90YWwoKTsgfSwgMTAwKTsKfTs='));
+            // getCurrData
+            var getCurrData = eval(atob('dmFyIGdldEN1cnJEYXRhID0gZnVuY3Rpb24oKXsKICB2YXIgcHJvZHMgPSBbXTsKICAkJCgnLnByb2R1Y3Qtcm93JykuZm9yRWFjaChmdW5jdGlvbihyb3csaSl7CiAgICB2YXIgcWkgPSByb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtcXVhbnRpdHknKTsgdmFyIHE9MTsKICAgIGlmKHFpICYmIHFpLnZhbHVlLnRyaW0oKSE9PScnKSBxID0gcGFyc2VJbnQocWkudmFsdWUpfHwwOwogICAgcHJvZHMucHVzaCh7bnVtYmVyOmkrMSwgbmFtZTpyb3cucXVlcnlTZWxlY3RvcignLnByb2R1Y3QtbmFtZScpPy52YWx1ZXx8JycsIHdlaWdodDpwYXJzZUZsb2F0KHJvdy5xdWVyeVNlbGVjdG9yKCcucHJvZHVjdC13ZWlnaHQnKT8udmFsdWUpfHwwLCBxdWFudGl0eTpxfSk7CiAgfSk7CiAgcmV0dXJuIHtwcm9kdWN0czpwcm9kcywgZGVsaXZlcnlSYXRlOnBhcnNlRmxvYXQoZGVsUmF0ZS52YWx1ZSl8fDAsIGNhcmdvUmF0ZTpwYXJzZUZsb2F0KGNhcmdvUi52YWx1ZSl8fDAsIGluY2x1ZGVUYXJlOmluY1RhcmUuY2hlY2tlZCwgdGFyZVdlaWdodDp0YXJlVy52YWx1ZX07Cn07'));
+            // saveToHistory (основная логика)
+            var saveToHistory = eval(atob('dmFyIHNhdmVUb0hpc3RvcnkgPSBmdW5jdGlvbigpewogIHZhciBwbiA9IGdldFBrZ051bSgpOyB2YXIgZGF0YSA9IGdldEN1cnJEYXRhKCk7IHZhciBoaXN0ID0gZ2V0SGlzdCgpOwogIHZhciBpZHggPSBoaXN0LmZpbmRJbmRleChmdW5jdGlvbihoKXsgcmV0dXJuIGgucGFja2FnZU51bWJlcj09PXBuOyB9KTsKICB2YXIgZW50cnkgPSB7aWQ6RGF0ZS5ub3coKSwgcGFja2FnZU51bWJlcjpwbiwgZGF0ZTpuZXcgRGF0ZSgpLnRvTG9jYWxlU3RyaW5nKCdydS1SVScpLCB0aW1lc3RhbXA6bmV3IERhdGUoKS50b0lTT1N0cmluZygpLCB0b3RhbFdlaWdodDp0b3RhbFcudGV4dENvbnRlbnQsIHRvdGFsSXRlbXM6dG90YWxJLnRleHRDb250ZW50LCB0b3RhbENvc3Q6dG90YWxDLnRleHRDb250ZW50LCBkYXRhOmRhdGF9OwogIGlmKGlkeD49MCkgaGlzdFtpZHhdPWVudHJ5OyBlbHNlIGhpc3QucHVzaChlbnRyeSk7CiAgc2F2ZUhpc3RMUyhoaXN0KTsgc2hvd05vdGlmKCfQodC+0YXRgNCw0L3QtdC90L4g0LIg0LjRgdGC0L7RgNC40Y4hIPCfkr4nKTsKfTs='));
 
             _0.addEventListener('DOMContentLoaded', function(){
                 var tabCalc = $('#'+'tabCalc');
@@ -348,117 +370,31 @@
                 function genPkgNum(){ var d=new Date(); return 'PKG-'+d.toISOString().slice(0,10).replace(/-/g,'')+'-'+d.toTimeString().slice(0,5).replace(':',''); }
                 function getPkgNum(){ if(!pkgNum.value.trim()) pkgNum.value = genPkgNum(); return pkgNum.value.trim(); }
                 function updatePackageDate(){ if(pkgDate) pkgDate.textContent = '📅 '+new Date().toLocaleString('ru-RU'); }
-                function calcTotal(){
-                    var dr = parseFloat(delRate.value)||0;
-                    var cr = parseFloat(cargoR.value)||0;
-                    var it = incTare.checked;
-                    var tw = parseFloat(tareW.value)||0;
-                    var totalG = 0, items = 0;
-                    var rows = $$('.product-row');
-                    rows.forEach(function(row){
-                        var w = parseFloat(row.querySelector('.product-weight')?.value)||0;
-                        var q = 1;
-                        var qi = row.querySelector('.product-quantity');
-                        if(qi && qi.value.trim()!=='') q = parseInt(qi.value)||0;
-                        var sub = w*q;
-                        totalG += sub; items += q;
-                        var se = row.querySelector('.product-subtotal');
-                        if(se) se.textContent = 'Вес позиции: '+sub+' г';
-                    });
-                    if(it && rows.length>0) totalG += tw;
-                    var kg = totalG/1000;
-                    totalW.textContent = totalG>=1000 ? (kg.toFixed(2)+' кг') : (totalG+' г');
-                    totalI.textContent = items+' шт.';
-                    totalC.textContent = (kg*dr + kg*cr).toFixed(2)+' ₽';
-                }
+
                 function addProduct(){
                     var n = productCounter++;
                     var div = _0.createElement('div'); div.className = 'product-row';
                     div.innerHTML = '<div class="product-number">'+n+'</div><div class="product-fields"><input type="text" class="product-name" placeholder="Название товара"><input type="number" class="product-weight" placeholder="Вес (г)" min="0" step="1"><input type="number" class="product-quantity" placeholder="Кол-во" min="1" step="1"></div><div class="product-subtotal">Вес позиции: 0 г</div><button class="remove-btn">✕</button>';
                     prodContainer.appendChild(div);
-                    div.querySelector('.product-name').addEventListener(_6, calcTotal);
-                    div.querySelector('.product-weight').addEventListener(_7, calcTotal);
-                    div.querySelector('.product-quantity').addEventListener(_7, calcTotal);
-                    div.querySelector('.remove-btn').addEventListener(_5, function(){ this.parentElement.remove(); calcTotal(); });
-                    calcTotal();
+                    div.querySelector('.product-name').addEventListener(_6, calculateTotal);
+                    div.querySelector('.product-weight').addEventListener(_7, calculateTotal);
+                    div.querySelector('.product-quantity').addEventListener(_7, calculateTotal);
+                    div.querySelector('.remove-btn').addEventListener(_5, function(){ this.parentElement.remove(); calculateTotal(); });
+                    calculateTotal();
                 }
-                function resetAll(){ if(confirm('Очистить все товары?')){ prodContainer.innerHTML=''; productCounter=1; calcTotal(); } }
+                function resetAll(){ if(confirm('Очистить все товары?')){ prodContainer.innerHTML=''; productCounter=1; calculateTotal(); } }
                 function showNotif(msg){ notif.textContent=msg; notif[_4][_b](_2); setTimeout(function(){ notif[_4][_a](_2); },2000); }
                 function getHist(){ return JSON.parse(localStorage.getItem('packageHistory')||'[]'); }
                 function saveHistLS(h){ localStorage.setItem('packageHistory', JSON.stringify(h)); }
-                function getCurrData(){
-                    var prods = [];
-                    $$('.product-row').forEach(function(row,i){
-                        var qi = row.querySelector('.product-quantity'); var q=1;
-                        if(qi && qi.value.trim()!=='') q=parseInt(qi.value)||0;
-                        prods.push({number:i+1, name:row.querySelector('.product-name')?.value||'', weight:parseFloat(row.querySelector('.product-weight')?.value)||0, quantity:q});
-                    });
-                    return {products:prods, deliveryRate:parseFloat(delRate.value)||0, cargoRate:parseFloat(cargoR.value)||0, includeTare:incTare.checked, tareWeight:tareW.value};
-                }
-
-                // Полностью переработанная загрузка из истории
-                function loadData(d){
-                    // Устанавливаем настройки
-                    delRate.value = d.deliveryRate||500;
-                    cargoR.value = d.cargoRate||0;
-                    incTare.checked = d.includeTare||false;
-                    tareW.value = d.tareWeight||200;
-
-                    // Очищаем контейнер
-                    prodContainer.innerHTML = '';
-                    productCounter = 1;
-
-                    if(d.products && Array.isArray(d.products) && d.products.length > 0){
-                        d.products.forEach(function(p){
-                            var div = _0.createElement('div');
-                            div.className = 'product-row';
-                            var name = (p.name||'').replace(/"/g, '&quot;');
-                            var weight = p.weight||0;
-                            var quantity = p.quantity||1;
-                            var subtotal = weight * quantity;
-                            div.innerHTML = '<div class="product-number">'+productCounter+'</div>'+
-                                '<div class="product-fields">'+
-                                '<input type="text" class="product-name" value="'+name+'" placeholder="Название товара">'+
-                                '<input type="number" class="product-weight" value="'+weight+'" placeholder="Вес (г)" min="0" step="1">'+
-                                '<input type="number" class="product-quantity" value="'+quantity+'" placeholder="Кол-во" min="1" step="1">'+
-                                '</div>'+
-                                '<div class="product-subtotal">Вес позиции: '+subtotal+' г</div>'+
-                                '<button class="remove-btn">✕</button>';
-                            prodContainer.appendChild(div);
-                            div.querySelector('.product-name').addEventListener(_6, calcTotal);
-                            div.querySelector('.product-weight').addEventListener(_7, calcTotal);
-                            div.querySelector('.product-quantity').addEventListener(_7, calcTotal);
-                            div.querySelector('.remove-btn').addEventListener(_5, function(){
-                                this.parentElement.remove();
-                                calcTotal();
-                            });
-                            productCounter++;
-                        });
-                    } else {
-                        // Если продуктов нет, показываем уведомление и создаём одну пустую строку
-                        showNotif('Нет данных о товарах');
-                        addProduct(); // создаём хотя бы одну строку для удобства
-                        return;
-                    }
-                    // Принудительно пересчитываем итоги несколько раз для надёжности
-                    calcTotal();
-                    setTimeout(function(){ calcTotal(); }, 100);
-                }
 
                 addBtn.addEventListener(_5, addProduct);
                 resetBtn.addEventListener(_5, resetAll);
-                delRate.addEventListener(_7, calcTotal);
-                cargoR.addEventListener(_7, calcTotal);
-                tareW.addEventListener(_7, calcTotal);
-                incTare.addEventListener(_7, calcTotal);
+                delRate.addEventListener(_7, calculateTotal);
+                cargoR.addEventListener(_7, calculateTotal);
+                tareW.addEventListener(_7, calculateTotal);
+                incTare.addEventListener(_7, calculateTotal);
 
-                saveHistBtn.addEventListener(_5, function(){
-                    var pn = getPkgNum(); var data = getCurrData(); var hist = getHist();
-                    var idx = hist.findIndex(function(h){ return h.packageNumber===pn; });
-                    var entry = {id:Date.now(), packageNumber:pn, date:new Date().toLocaleString('ru-RU'), timestamp:new Date().toISOString(), totalWeight:totalW.textContent, totalItems:totalI.textContent, totalCost:totalC.textContent, data:data};
-                    if(idx>=0) hist[idx]=entry; else hist.push(entry);
-                    saveHistLS(hist); showNotif('Сохранено в историю! 💾');
-                });
+                saveHistBtn.addEventListener(_5, saveToHistory);
 
                 showHistBtn.addEventListener(_5, function(){
                     var hist = getHist(); histStats.textContent = 'Всего посылок: '+hist.length;
@@ -466,7 +402,6 @@
                     else {
                         hist.sort(function(a,b){ return new Date(b.timestamp)-new Date(a.timestamp); });
                         histContent.innerHTML = hist.map(function(h){ return '<div class="history-item" data-id="'+h.id+'"><div><div style="font-weight:700;color:#667eea;">📦 '+h.packageNumber+'</div><div style="font-size:14px;color:#999;">'+h.date+'</div><div>⚖️ '+h.totalWeight+' | 📋 '+h.totalItems+' | 💰 '+h.totalCost+'</div></div><button class="history-delete-btn">✕</button></div>'; }).join('');
-                        // Навешиваем обработчики заново
                         $$('.history-item').forEach(function(el){
                             el.addEventListener(_5, function(e){
                                 var deleteBtn = e.target.closest('.history-delete-btn');

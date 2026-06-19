@@ -197,15 +197,58 @@
             margin-bottom: 20px;
         }
 
+        /* ===== Стили для печати – сохраняем цвета ===== */
         @media print {
-            body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, .toast, .file-input-hidden, .pdf-row { display: none !important; }
-            .calc-container { box-shadow: none; padding: 0; }
-            .package-header { background: linear-gradient(135deg, #667eea, #764ba2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .section { background: #f8f9fa !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .summary { background: linear-gradient(135deg, #667eea, #764ba2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .product-row { border: 1px solid #ddd; }
-            .tool-panel { display: block !important; }
+            body { 
+                background: white !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, 
+            .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, 
+            .toast, .file-input-hidden, .pdf-row, .history-delete-btn, .auto-gen-badge, .edit-hint {
+                display: none !important;
+            }
+            .calc-container { 
+                box-shadow: none; 
+                padding: 0; 
+                margin: 0; 
+                width: 100%; 
+            }
+            .package-header { 
+                background: linear-gradient(135deg, #667eea, #764ba2) !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                color: white !important; 
+            }
+            .section { 
+                background: #f8f9fa !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            .summary { 
+                background: linear-gradient(135deg, #667eea, #764ba2) !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                color: white !important; 
+            }
+            .product-row { 
+                border: 1px solid #ddd; 
+                background: white !important; 
+            }
+            .product-subtotal {
+                background: #e8eaf6 !important;
+                color: #667eea !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .checkbox-group label {
+                border: 1px solid #ccc !important;
+                background: white !important;
+            }
+            .tool-panel { 
+                display: block !important; 
+            }
         }
     </style>
 </head>
@@ -315,11 +358,6 @@
     <div id="notification" class="notification"></div>
     <div id="toast" class="toast">✅ Сохранено</div>
 
-    <!-- Библиотека html2canvas -->
-    <script>
-        (function(){var f=function(){function f(e,t,n){var r=n;if(typeof e!="string")throw new Error("html2canvas: неверный тип для элемента");var i=document.querySelector(e);if(!i)throw new Error("html2canvas: элемент не найден");var o=window.getComputedStyle(i);if(o.display==="none")throw new Error("html2canvas: элемент скрыт");var a={backgroundColor:o.backgroundColor,scale:t||window.devicePixelRatio||1,logging:!1};if(r)for(var s in r)a[s]=r[s];return this.element=i,this.options=a,this.canvas=document.createElement("canvas"),this.ctx=this.canvas.getContext("2d"),this.width=0,this.height=0,this}return f.prototype.render=function(){var e=this;return new Promise(function(t,n){var r=e.element,i=e.options,o=i.scale,a=i.backgroundColor,s=e.ctx,u=r.offsetWidth*l,l=r.offsetHeight*l;e.width=u,e.height=l,e.canvas.width=u,e.canvas.height=l,s.fillStyle=a,s.fillRect(0,0,u,l);var c=new XMLSerializer().serializeToString(r);var d="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="'+u+'" height="'+l+'"><foreignObject width="100%" height="100%">'+c+"</foreignObject></svg>");var h=new Image;h.onload=function(){s.drawImage(h,0,0),t(e.canvas)},h.onerror=n,h.src=d})},f}();window.html2canvas=f})();
-    </script>
-
     <script>
         // Service Worker
         if ('serviceWorker' in navigator) {
@@ -346,55 +384,7 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // ====================== ФУНКЦИЯ СОХРАНЕНИЯ PDF (с принудительным скачиванием через ссылку) ======================
-        function createPDFFromCanvas(canvas, filename) {
-            const imgData = canvas.toDataURL('image/png');
-            // Простейшая PDF-структура с одним изображением
-            const pdf = "%PDF-1.3\n%âãÏÓ\n";
-            const objects = [];
-            objects.push("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj");
-            objects.push("2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj");
-            objects.push("3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 "+canvas.width+" "+canvas.height+"] /Contents 4 0 R /Resources << /XObject << /Img0 5 0 R >> >> >>\nendobj");
-            objects.push("4 0 obj\n<< /Length 44 >>\nstream\nq "+canvas.width+" 0 0 "+canvas.height+" 0 0 cm /Img0 Do Q\nendstream\nendobj");
-            objects.push("5 0 obj\n<< /Type /XObject /Subtype /Image /Width "+canvas.width+" /Height "+canvas.height+" /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length "+imgData.length+" >>\nstream\n"+imgData+"\nendstream\nendobj");
-            let offset = 0;
-            let xref = `xref\n0 6\n0000000000 65535 f \n`;
-            for (const obj of objects) {
-                xref += `${String(offset).padStart(10, '0')} 00000 n \n`;
-                offset += obj.length + 1;
-            }
-            const trailer = `trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${offset}\n%%EOF`;
-            const fullPdf = pdf + objects.join('\n') + '\n' + xref + trailer;
-            const blob = new Blob([fullPdf], {type: 'application/pdf'});
-            const url = URL.createObjectURL(blob);
-
-            // Всегда показываем ссылку для скачивания (надёжный способ)
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.textContent = '📄 Скачать ' + filename;
-            a.style.display = 'block';
-            a.style.margin = '10px auto';
-            a.style.padding = '12px';
-            a.style.background = '#2563eb';
-            a.style.color = 'white';
-            a.style.textAlign = 'center';
-            a.style.borderRadius = '12px';
-            a.style.textDecoration = 'none';
-            a.style.maxWidth = '300px';
-            a.style.fontWeight = '600';
-            document.body.appendChild(a);
-            // Автоматический клик через небольшую задержку для гарантии
-            setTimeout(() => {
-                a.click();
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 2000);
-            }, 100);
-        }
-
-        // ====================== ОСНОВНОЙ СКРИПТ ======================
+        // ====================== ОБФУСЦИРОВАННЫЙ JS (с печатью) ======================
         (function(){
             var _0 = document;
             var $ = _0.querySelector.bind(_0);
@@ -603,16 +593,10 @@
                 closeHistBtn.addEventListener(_5, function(){ histModal[_4][_a](_2); });
                 function closeHist(){ histModal[_4][_a](_2); }
 
-                // PDF калькулятора – скриншот + PDF
+                // PDF калькулятора – системная печать
                 exportPdfBtn.addEventListener(_5, function(){
-                    showNotif('Создаётся PDF...');
-                    const element = document.getElementById('calcPanel');
-                    html2canvas(element, {scale: 2, backgroundColor: '#ffffff'}).then(function(canvas) {
-                        createPDFFromCanvas(canvas, 'Посылка_'+getPkgNum()+'.pdf');
-                        showNotif('PDF готов! Нажмите "Скачать"');
-                    }).catch(function() {
-                        showNotif('Ошибка при создании PDF');
-                    });
+                    showNotif('Открывается окно печати – выберите "Сохранить как PDF"');
+                    setTimeout(function(){ window.print(); }, 200);
                 });
 
                 // ---------- БЛАНК ЗАКАЗА ----------
@@ -716,19 +700,10 @@
                     if(confirm('Удалить?')){ orders=orders.filter(function(o){ return o.id!==currentOrderId; }); currentOrderId=null; saveOrders(); if(orders.length>0) selectOrder(orders[0].id); else clearForm(); showToast('🗑 Заказ удалён'); }
                 });
 
-                // PDF бланка – скриншот + PDF
+                // PDF бланка – системная печать
                 $('#'+'exportPdfBtn2').addEventListener(_5, function(){
-                    if(!currentOrderId){ showToast('⚠️ Выберите заказ'); return; }
-                    var o = orders.find(function(o){ return o.id===currentOrderId; });
-                    if(!o) return;
-                    showToast('Создаётся PDF...');
-                    const element = document.getElementById('blankPanel');
-                    html2canvas(element, {scale: 2, backgroundColor: '#ffffff'}).then(function(canvas) {
-                        createPDFFromCanvas(canvas, 'Заказ_'+(o.orderNumber||'')+'.pdf');
-                        showToast('PDF готов! Нажмите "Скачать"');
-                    }).catch(function() {
-                        showToast('Ошибка при создании PDF');
-                    });
+                    showToast('Открывается окно печати – выберите "Сохранить как PDF"');
+                    setTimeout(function(){ window.print(); }, 200);
                 });
 
                 ordNum.addEventListener(_6, autoSave); persCode.addEventListener(_6, autoSave); country.addEventListener(_6, autoSave); carType.addEventListener(_7, autoSave); tariff.addEventListener(_6, autoSave);

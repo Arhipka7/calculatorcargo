@@ -17,6 +17,7 @@
     <title>Посылки · Калькулятор & Бланк заказа</title>
     
     <style>
+        /* Все стили без изменений */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Roboto', -apple-system, sans-serif; }
         body { background: #f1f5f9; padding: 15px; min-height: 100vh; min-height: 100dvh; }
         .app-container { max-width: 1400px; margin: 0 auto; }
@@ -46,6 +47,7 @@
         button.warning { background:#f59e0b; border-color:#f59e0b; color:white; }
         button.purple { background:#8b5cf6; border-color:#8b5cf6; color:white; }
         .btn-pdf { background:#dc2626; border:2px solid #dc2626; color:white; padding:10px 28px; font-size:1.05rem; font-weight:700; border-radius:40px; letter-spacing:0.3px; }
+        .btn-browser { background:#0f172a; border:2px solid #0f172a; color:white; padding:10px 28px; font-size:0.9rem; font-weight:700; border-radius:40px; letter-spacing:0.3px; }
 
         .tool-panel { display: none; }
         .tool-panel.active { display: block; }
@@ -192,63 +194,17 @@
         .toast.show { opacity:1; }
         .file-input-hidden { display:none; }
 
-        .pdf-row {
-            text-align: right;
-            margin-bottom: 20px;
-        }
+        .pdf-row { text-align: right; margin-bottom: 20px; display: flex; justify-content: flex-end; gap: 10px; }
 
-        /* ===== Стили для печати – сохраняем цвета ===== */
         @media print {
-            body { 
-                background: white !important; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
-            }
-            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, 
-            .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, 
-            .toast, .file-input-hidden, .pdf-row, .history-delete-btn, .auto-gen-badge, .edit-hint {
-                display: none !important;
-            }
-            .calc-container { 
-                box-shadow: none; 
-                padding: 0; 
-                margin: 0; 
-                width: 100%; 
-            }
-            .package-header { 
-                background: linear-gradient(135deg, #667eea, #764ba2) !important; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
-                color: white !important; 
-            }
-            .section { 
-                background: #f8f9fa !important; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
-            }
-            .summary { 
-                background: linear-gradient(135deg, #667eea, #764ba2) !important; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
-                color: white !important; 
-            }
-            .product-row { 
-                border: 1px solid #ddd; 
-                background: white !important; 
-            }
-            .product-subtotal {
-                background: #e8eaf6 !important;
-                color: #667eea !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .checkbox-group label {
-                border: 1px solid #ccc !important;
-                background: white !important;
-            }
-            .tool-panel { 
-                display: block !important; 
-            }
+            body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .tab-switcher, .blank-header, .btn, .remove-btn, .notification, .modal, .delivery-links, .btn-group, .btn-group-pdf, .save-load-section, .buttons-section, .toast, .file-input-hidden, .pdf-row { display: none !important; }
+            .calc-container { box-shadow: none; padding: 0; }
+            .package-header { background: linear-gradient(135deg, #667eea, #764ba2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .section { background: #f8f9fa !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .summary { background: linear-gradient(135deg, #667eea, #764ba2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .product-row { border: 1px solid #ddd; }
+            .tool-panel { display: block !important; }
         }
     </style>
 </head>

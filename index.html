@@ -462,60 +462,23 @@
                 const encoded = hash.substring(7);
                 const state = unpackState(encoded);
                 if (state) {
-                    // Восстанавливаем калькулятор
-                    if (state.calc) {
-                        document.getElementById('deliveryRate').value = state.calc.deliveryRate;
-                        document.getElementById('tareWeight').value = state.calc.tareWeight;
-                        document.getElementById('cargoRate').value = state.calc.cargoRate;
-                        document.getElementById('includeTare').checked = state.calc.includeTare;
-                        document.getElementById('packageNumber').value = state.calc.packageNumber || '';
-                        // Удаляем текущие товары и добавляем сохранённые
-                        const container = document.getElementById('products');
-                        container.innerHTML = '';
-                        if (state.calc.products) {
-                            state.calc.products.forEach(p => {
-                                const div = document.createElement('div');
-                                div.className = 'product-row';
-                                const n = (container.children.length + 1);
-                                div.innerHTML = '<div class="product-number">' + n + '</div>' +
-                                    '<div class="product-fields">' +
-                                    '<input type="text" class="product-name" value="' + (p.name || '') + '" placeholder="Название товара">' +
-                                    '<input type="number" class="product-weight" value="' + (p.weight || '') + '" placeholder="Вес (г)" min="0" step="1">' +
-                                    '<input type="number" class="product-quantity" value="' + (p.qty || '1') + '" placeholder="Кол-во" min="1" step="1">' +
-                                    '</div>' +
-                                    '<div class="product-subtotal">Вес позиции: ' + (p.weight * p.qty) + ' г</div>' +
-                                    '<button class="remove-btn">✕</button>';
-                                container.appendChild(div);
-                            });
-                        }
-                        // Пересчитываем итоги (вызываем calculateTotal, но она внутри основного скрипта)
-                        if (typeof calculateTotal === 'function') calculateTotal();
-                    }
-                    // Восстанавливаем историю
+                    // Сохраняем в localStorage, затем перезагружаем страницу без хэша
                     if (state.history) {
                         localStorage.setItem('packageHistory', JSON.stringify(state.history));
                     }
-                    // Восстанавливаем заказы
                     if (state.ordersHistory) {
                         localStorage.setItem('tracking_orders_app_v4', JSON.stringify(state.ordersHistory));
-                        if (typeof orders !== 'undefined') {
-                            orders.length = 0;
-                            Array.prototype.push.apply(orders, state.ordersHistory);
-                            updateOrdersCount?.();
-                            renderOrdersList?.();
-                        }
                     }
-                    // Выбираем текущий заказ, если был
-                    if (state.currentOrder && typeof orders !== 'undefined') {
-                        const exists = orders.find(o => o.id === state.currentOrder.id);
-                        if (exists) {
-                            selectOrder?.(exists.id);
-                        }
+                    // Сохраняем данные калькулятора отдельно (для восстановления после перезагрузки)
+                    if (state.calc) {
+                        sessionStorage.setItem('restoredCalc', JSON.stringify(state.calc));
                     }
-                    // Убираем хэш из адресной строки (опционально)
-                    if (history.replaceState) {
-                        history.replaceState(null, '', window.location.pathname + window.location.search);
+                    // Сохраняем ID текущего заказа
+                    if (state.currentOrder) {
+                        sessionStorage.setItem('restoredOrderId', state.currentOrder.id);
                     }
+                    // Перезагружаем страницу без хэша, чтобы основной скрипт инициализировался с новыми данными
+                    window.location.href = window.location.href.split('#')[0];
                 }
             }
         });
@@ -537,6 +500,44 @@
             var _b = 'add';
 
             _0.addEventListener('DOMContentLoaded', function(){
+                // Восстановление данных калькулятора из sessionStorage после перезагрузки
+                const restoredCalc = sessionStorage.getItem('restoredCalc');
+                if (restoredCalc) {
+                    const data = JSON.parse(restoredCalc);
+                    document.getElementById('deliveryRate').value = data.deliveryRate;
+                    document.getElementById('tareWeight').value = data.tareWeight;
+                    document.getElementById('cargoRate').value = data.cargoRate;
+                    document.getElementById('includeTare').checked = data.includeTare;
+                    document.getElementById('packageNumber').value = data.packageNumber || '';
+                    sessionStorage.removeItem('restoredCalc');
+                    // Восстановим товары после инициализации
+                    setTimeout(() => {
+                        const container = document.getElementById('products');
+                        if (container && data.products) {
+                            container.innerHTML = '';
+                            data.products.forEach(p => {
+                                const div = document.createElement('div');
+                                div.className = 'product-row';
+                                const n = container.children.length + 1;
+                                div.innerHTML = '<div class="product-number">' + n + '</div>' +
+                                    '<div class="product-fields">' +
+                                    '<input type="text" class="product-name" value="' + (p.name || '') + '" placeholder="Название товара">' +
+                                    '<input type="number" class="product-weight" value="' + (p.weight || '') + '" placeholder="Вес (г)" min="0" step="1">' +
+                                    '<input type="number" class="product-quantity" value="' + (p.qty || '1') + '" placeholder="Кол-во" min="1" step="1">' +
+                                    '</div>' +
+                                    '<div class="product-subtotal">Вес позиции: ' + (p.weight * p.qty) + ' г</div>' +
+                                    '<button class="remove-btn">✕</button>';
+                                container.appendChild(div);
+                                div.querySelector('.product-name').addEventListener(_6, calculateTotal);
+                                div.querySelector('.product-weight').addEventListener(_7, calculateTotal);
+                                div.querySelector('.product-quantity').addEventListener(_7, calculateTotal);
+                                div.querySelector('.remove-btn').addEventListener(_5, function(){ this.parentElement.remove(); calculateTotal(); });
+                            });
+                            calculateTotal();
+                        }
+                    }, 300);
+                }
+
                 var a = $('#'+'tabCalc');
                 var b = $('#'+'tabBlank');
                 var cP = $('#'+'calcPanel');
@@ -767,6 +768,16 @@
                     }
                     updateOrdersCount(); renderOrdersList();
                     if(orders.length>0) selectOrder(orders[0].id); else { clearForm(); currentOrderId=null; }
+
+                    // Восстановление выбранного заказа после перезагрузки
+                    const restoredOrderId = sessionStorage.getItem('restoredOrderId');
+                    if (restoredOrderId) {
+                        sessionStorage.removeItem('restoredOrderId');
+                        const restoredOrder = orders.find(o => o.id == restoredOrderId);
+                        if (restoredOrder) {
+                            selectOrder(restoredOrder.id);
+                        }
+                    }
                 }
                 function saveOrders(){ localStorage.setItem('tracking_orders_app_v4', JSON.stringify(orders)); updateOrdersCount(); renderOrdersList(); showToast('✅ Сохранено'); }
                 function updateOrdersCount(){ ordersCount.textContent='('+orders.length+')'; }

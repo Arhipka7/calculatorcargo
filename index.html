@@ -17,6 +17,7 @@
     <title>Посылки · Калькулятор & Бланк заказа</title>
     
     <style>
+        /* (стили без изменений) */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Roboto', -apple-system, sans-serif; }
         body { background: #f1f5f9; padding: 15px; min-height: 100vh; min-height: 100dvh; }
         .app-container { max-width: 1400px; margin: 0 auto; }
@@ -193,7 +194,6 @@
         .toast.show { opacity:1; }
         .file-input-hidden { display:none; }
 
-        /* Кнопка копирования ссылки */
         .copy-row {
             display: flex;
             justify-content: flex-end;
@@ -348,22 +348,79 @@
             navigator.serviceWorker.register(URL.createObjectURL(blob));
         }
 
-        // Обработчики копирования ссылки
-        function copyPageUrl() {
-            const url = window.location.href;
+        // ====================== СОХРАНЕНИЕ И ВОССТАНОВЛЕНИЕ ДАННЫХ ЧЕРЕЗ URL ======================
+        function packState() {
+            const calcData = (function() {
+                const products = [];
+                document.querySelectorAll('.product-row').forEach(row => {
+                    const name = row.querySelector('.product-name')?.value || '';
+                    const weight = parseFloat(row.querySelector('.product-weight')?.value) || 0;
+                    const qty = parseInt(row.querySelector('.product-quantity')?.value) || 1;
+                    products.push({ name, weight, qty });
+                });
+                return {
+                    deliveryRate: document.getElementById('deliveryRate')?.value || 500,
+                    tareWeight: document.getElementById('tareWeight')?.value || 200,
+                    cargoRate: document.getElementById('cargoRate')?.value || 0,
+                    includeTare: document.getElementById('includeTare')?.checked || false,
+                    packageNumber: document.getElementById('packageNumber')?.value || '',
+                    products
+                };
+            })();
+
+            let currentOrder = null;
+            if (typeof currentOrderId !== 'undefined' && currentOrderId && typeof orders !== 'undefined') {
+                const order = orders.find(o => o.id === currentOrderId);
+                if (order) currentOrder = order;
+            }
+
+            const history = JSON.parse(localStorage.getItem('packageHistory') || '[]');
+            const ordersHistory = JSON.parse(localStorage.getItem('tracking_orders_app_v4') || '[]');
+
+            const state = {
+                calc: calcData,
+                currentOrder,
+                history,
+                ordersHistory
+            };
+
+            return btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+        }
+
+        function unpackState(encoded) {
+            try {
+                const json = decodeURIComponent(escape(atob(encoded)));
+                return JSON.parse(json);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function generateSharableURL() {
+            const base = window.location.href.split('#')[0].split('?')[0];
+            const state = packState();
+            return base + '#state=' + state;
+        }
+
+        function copySharableURL() {
+            const url = generateSharableURL();
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(url).then(() => {
-                    const notif = document.getElementById('notification');
-                    if (notif) {
-                        notif.textContent = 'Ссылка скопирована! Откройте её в браузере для печати PDF.';
-                        notif.classList.add('show');
-                        setTimeout(() => notif.classList.remove('show'), 3000);
-                    }
+                    showCopyNotification();
                 }).catch(() => {
                     fallbackCopy(url);
                 });
             } else {
                 fallbackCopy(url);
+            }
+        }
+
+        function showCopyNotification() {
+            const notif = document.getElementById('notification');
+            if (notif) {
+                notif.textContent = 'Ссылка скопирована! Вставьте её в браузер.';
+                notif.classList.add('show');
+                setTimeout(() => notif.classList.remove('show'), 3000);
             }
         }
 
@@ -376,12 +433,7 @@
             textarea.select();
             try {
                 document.execCommand('copy');
-                const notif = document.getElementById('notification');
-                if (notif) {
-                    notif.textContent = 'Ссылка скопирована! Откройте её в браузере для печати PDF.';
-                    notif.classList.add('show');
-                    setTimeout(() => notif.classList.remove('show'), 3000);
-                }
+                showCopyNotification();
             } catch (err) {
                 const notif = document.getElementById('notification');
                 if (notif) {
@@ -393,13 +445,79 @@
             document.body.removeChild(textarea);
         }
 
-        document.getElementById('copyLinkCalc').addEventListener('click', function(e) {
-            e.stopPropagation();
-            copyPageUrl();
-        });
-        document.getElementById('copyLinkBlank').addEventListener('click', function(e) {
-            e.stopPropagation();
-            copyPageUrl();
+        // Обработчики копирования
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('copyLinkCalc')?.addEventListener('click', function(e) {
+                e.stopPropagation();
+                copySharableURL();
+            });
+            document.getElementById('copyLinkBlank')?.addEventListener('click', function(e) {
+                e.stopPropagation();
+                copySharableURL();
+            });
+
+            // Восстановление состояния при загрузке
+            const hash = window.location.hash;
+            if (hash.startsWith('#state=')) {
+                const encoded = hash.substring(7);
+                const state = unpackState(encoded);
+                if (state) {
+                    // Восстанавливаем калькулятор
+                    if (state.calc) {
+                        document.getElementById('deliveryRate').value = state.calc.deliveryRate;
+                        document.getElementById('tareWeight').value = state.calc.tareWeight;
+                        document.getElementById('cargoRate').value = state.calc.cargoRate;
+                        document.getElementById('includeTare').checked = state.calc.includeTare;
+                        document.getElementById('packageNumber').value = state.calc.packageNumber || '';
+                        // Удаляем текущие товары и добавляем сохранённые
+                        const container = document.getElementById('products');
+                        container.innerHTML = '';
+                        if (state.calc.products) {
+                            state.calc.products.forEach(p => {
+                                const div = document.createElement('div');
+                                div.className = 'product-row';
+                                const n = (container.children.length + 1);
+                                div.innerHTML = '<div class="product-number">' + n + '</div>' +
+                                    '<div class="product-fields">' +
+                                    '<input type="text" class="product-name" value="' + (p.name || '') + '" placeholder="Название товара">' +
+                                    '<input type="number" class="product-weight" value="' + (p.weight || '') + '" placeholder="Вес (г)" min="0" step="1">' +
+                                    '<input type="number" class="product-quantity" value="' + (p.qty || '1') + '" placeholder="Кол-во" min="1" step="1">' +
+                                    '</div>' +
+                                    '<div class="product-subtotal">Вес позиции: ' + (p.weight * p.qty) + ' г</div>' +
+                                    '<button class="remove-btn">✕</button>';
+                                container.appendChild(div);
+                            });
+                        }
+                        // Пересчитываем итоги (вызываем calculateTotal, но она внутри основного скрипта)
+                        if (typeof calculateTotal === 'function') calculateTotal();
+                    }
+                    // Восстанавливаем историю
+                    if (state.history) {
+                        localStorage.setItem('packageHistory', JSON.stringify(state.history));
+                    }
+                    // Восстанавливаем заказы
+                    if (state.ordersHistory) {
+                        localStorage.setItem('tracking_orders_app_v4', JSON.stringify(state.ordersHistory));
+                        if (typeof orders !== 'undefined') {
+                            orders.length = 0;
+                            Array.prototype.push.apply(orders, state.ordersHistory);
+                            updateOrdersCount?.();
+                            renderOrdersList?.();
+                        }
+                    }
+                    // Выбираем текущий заказ, если был
+                    if (state.currentOrder && typeof orders !== 'undefined') {
+                        const exists = orders.find(o => o.id === state.currentOrder.id);
+                        if (exists) {
+                            selectOrder?.(exists.id);
+                        }
+                    }
+                    // Убираем хэш из адресной строки (опционально)
+                    if (history.replaceState) {
+                        history.replaceState(null, '', window.location.pathname + window.location.search);
+                    }
+                }
+            }
         });
 
         // ====================== ОБФУСЦИРОВАННЫЙ JS (с печатью) ======================
@@ -619,6 +737,7 @@
 
                 // ---------- БЛАНК ЗАКАЗА ----------
                 var orders=[], currentOrderId=null, saveTimeout=null;
+                window.orders = orders;
                 var ordNum = $('#'+'orderNumber');
                 var persCode = $('#'+'personalCode');
                 var country = $('#'+'country');

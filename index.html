@@ -12,10 +12,10 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-size='48' text-anchor='middle' fill='white' font-family='Arial'%3E📦%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-size='48' text-anchor='middle' fill='white' font-family='Arial'%3E📦%3C/text%3E%3C/svg%3E" />
     <title>Посылки · Калькулятор & Бланк заказа</title>
-    <!-- html2pdf для генерации PDF (скачивание) -->
+    <!-- html2pdf для скачивания PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbz8Zz8Bps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        /* ---------- ВСЕ СТИЛИ (без изменений, взяты из исходного файла) ---------- */
+        /* ---------- ОСНОВНЫЕ СТИЛИ ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Roboto', -apple-system, sans-serif; }
         body { background: #f1f5f9; padding: 15px; min-height: 100vh; min-height: 100dvh; }
         .app-container { max-width: 1400px; margin: 0 auto; }
@@ -239,7 +239,28 @@
         .blank-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .blank-title { font-size: 1.7rem; background: linear-gradient(135deg, #1e293b, #2d3a4f); background-clip: text; -webkit-background-clip: text; color: transparent; }
         .two-columns { display: flex; gap: 24px; flex-wrap: wrap; }
-        .orders-list { flex: 0.8; min-width: 240px; max-width: 320px; background: white; border-radius: 28px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: fit-content; max-height: 80vh; overflow-y: auto; }
+
+        /* ===== ИСПРАВЛЕННАЯ ШИРИНА ПАНЕЛИ "МОИ ЗАКАЗЫ" ===== */
+        .orders-list {
+            flex: 0 0 220px;
+            min-width: 180px;
+            max-width: 240px;
+            background: white;
+            border-radius: 28px;
+            padding: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: fit-content;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        @media (max-width: 768px) {
+            .orders-list {
+                flex: 1 1 100%;
+                min-width: unset;
+                max-width: 100%;
+            }
+        }
+
         .form-panel { flex: 3; min-width: 420px; background: white; border-radius: 28px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .order-card { border: 1px solid #e2e8f0; border-radius: 20px; margin-bottom: 12px; padding: 10px 14px; cursor: pointer; }
         .order-card.selected { background: #eff6ff; border-left: 5px solid #2563eb; }
@@ -273,14 +294,14 @@
     </style>
 </head>
 <body>
-    <!-- ВСЯ РАЗМЕТКА (без изменений) – взята из исходного файла -->
+    <!-- ===== ВСЯ РАЗМЕТКА (без изменений) ===== -->
     <div class="app-container">
         <div class="tab-switcher">
             <button class="tab-btn active" id="tabCalc">🧮 Калькулятор</button>
             <button class="tab-btn" id="tabBlank">📋 Бланк заказа</button>
         </div>
 
-        <!-- ===================== КАЛЬКУЛЯТОР ===================== -->
+        <!-- КАЛЬКУЛЯТОР -->
         <div class="tool-panel active" id="calcPanel">
             <div class="copy-row">
                 <button class="btn-copy" id="copyLinkCalc">📋 Копировать ссылку</button>
@@ -294,12 +315,9 @@
                     </div>
                     <div class="package-date" id="packageDate"></div>
                 </div>
-
                 <div class="section">
                     <div class="section-title">⚙️ Настройки доставки</div>
-
                     <div class="delivery-settings">
-                        <!-- Группа 1: Москва -->
                         <div class="field-group">
                             <div class="form-group">
                                 <label>💰 Стоимость за 1 кг из Москвы (транспортной компанией)</label>
@@ -309,8 +327,6 @@
                                 <button id="showTariffBtn">🚚 Тарифы из Москвы</button>
                             </div>
                         </div>
-
-                        <!-- Группа 2: Карго -->
                         <div class="field-group">
                             <div class="form-group">
                                 <label>🚚 Доставка со склада карго из Китая ($/кг)</label>
@@ -319,14 +335,11 @@
                             <div class="tariff-btn-wrapper">
                                 <button id="showCargoTariffBtn">🚢 Тарифы Карго MYR25</button>
                             </div>
-                            <!-- Дополнительные кнопки: плотность и памятка -->
                             <div class="delivery-extra">
                                 <button class="density-btn" id="showDensityBtn">📐 Калькулятор плотности</button>
                                 <button class="cost-hint-btn" id="showCostHintBtn">📊 Как рассчитать стоимость</button>
                             </div>
                         </div>
-
-                        <!-- Группа 3: Количество мест -->
                         <div class="field-group">
                             <div class="form-group">
                                 <label>📦 Количество мест</label>
@@ -334,8 +347,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Блок упаковки -->
                     <div class="form-row-3" style="display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px;">
                         <div class="form-group">
                             <label>📦 Тип упаковки</label>
@@ -368,7 +379,6 @@
                         <span style="font-size: 14px; color: #64748b;" id="packagingSummary">Упаковка: не выбрана</span>
                     </div>
                 </div>
-
                 <div class="section">
                     <div class="section-title">📦 Товары в посылке</div>
                     <div id="products"></div>
@@ -377,13 +387,11 @@
                         <button class="btn reset-btn" id="resetAllBtn">↺ Очистить</button>
                     </div>
                 </div>
-
                 <div class="summary">
                     <div><div class="summary-label">📊 Общий вес</div><div class="summary-value" id="totalWeight">0 г</div></div>
                     <div><div class="summary-label">📋 Товаров</div><div class="summary-value" id="totalItems">0 шт.</div></div>
                     <div><div class="summary-label">💰 Стоимость</div><div class="summary-value" id="totalCost">0 $</div></div>
                 </div>
-
                 <div class="save-load-section">
                     <button class="btn save-btn" id="saveToHistoryBtn">💾 Сохранить</button>
                     <button class="btn history-btn" id="showHistoryBtn">📂 История</button>
@@ -403,7 +411,7 @@
             </div>
         </div>
 
-        <!-- ===================== БЛАНК ЗАКАЗА ===================== -->
+        <!-- БЛАНК ЗАКАЗА -->
         <div class="tool-panel" id="blankPanel">
             <div class="copy-row">
                 <button class="btn-copy" id="copyLinkBlank">📋 Копировать ссылку</button>
@@ -448,198 +456,24 @@
         </div>
     </div>
 
-    <!-- ===================== МОДАЛЬНЫЕ ОКНА ===================== -->
-    <!-- Тарифы Москвы -->
-    <div id="tariffModal" class="modal">
-        <div class="modal-content" style="max-width: 650px; width: 95%;">
-            <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-                <button id="closeTariffBtn" style="background:transparent; border:none; font-size:28px; cursor:pointer; color:#94a3b8;">&times;</button>
-            </div>
-            <div class="tariff-modal-inner">
-                <div class="header">
-                    <div class="icon-row">📦</div>
-                    <h1>Тарифы на доставку из Москвы</h1>
-                    <p class="subtitle">Выберите транспортную компанию для расчёта стоимости</p>
-                    <span class="badge">🚚 7 проверенных перевозчиков</span>
-                </div>
-                <div class="grid" id="tariffGrid"></div>
-                <p class="footer-note">Нажмите на карточку — откроется сайт компании в новой вкладке <span>↗</span></p>
-            </div>
-        </div>
-    </div>
+    <!-- МОДАЛЬНЫЕ ОКНА (тарифы, плотность, памятка) -->
+    <div id="tariffModal" class="modal"><div class="modal-content" style="max-width: 650px; width: 95%;"><div style="display:flex; justify-content:flex-end; margin-bottom:10px;"><button id="closeTariffBtn" style="background:transparent; border:none; font-size:28px; cursor:pointer; color:#94a3b8;">&times;</button></div><div class="tariff-modal-inner"><div class="header"><div class="icon-row">📦</div><h1>Тарифы на доставку из Москвы</h1><p class="subtitle">Выберите транспортную компанию для расчёта стоимости</p><span class="badge">🚚 7 проверенных перевозчиков</span></div><div class="grid" id="tariffGrid"></div><p class="footer-note">Нажмите на карточку — откроется сайт компании в новой вкладке <span>↗</span></p></div></div></div>
 
-    <!-- Тарифы Карго -->
-    <div id="tariffCargoModal" class="modal">
-        <div class="modal-content cargo-modal-content" style="position:relative;">
-            <button class="close-btn" id="closeCargoTariffBtn">×</button>
-            <div class="cargo-header-blue">
-                <h1>КАРГО MYR25</h1>
-                <h2>Доставка Китай - Москва</h2>
-                <div class="cargo-deadline">СРОКИ от 25 дней +</div>
-            </div>
-            <div class="cargo-section-title">📋 Основные тарифы</div>
-            <table class="cargo-table">
-                <thead>
-                    <tr><th>№</th><th style="width:20%;">Категория груза</th><th style="width:60%;">Условия и особенности (при плотности &lt; 100)</th><th>Цена<br />($/кг)</th></tr>
-                </thead>
-                <tbody>
-                    <tr class="cargo-row-light"><td>1</td><td><b>Сборный груз</b></td><td>Расчет по кубу 420 $/кг, можно жидкости и еду, и деревянную обрешётку.</td><td><b>3,9</b></td></tr>
-                    <tr class="cargo-row-muted"><td>2</td><td><b>Обувь ОПТ</b></td><td>Расчет по кубу 390 $/кг. <span class="cargo-small-text">Для брендовой обуви наценка +0,2 $/кг</span></td><td><b>4,0</b></td></tr>
-                    <tr class="cargo-row-light"><td>3</td><td><b>Одежда ОПТ</b><br /><span class="cargo-small-text">(1–3 трека)</span></td><td>Расчет по кубу 400 $/кг.</td><td><b>3,8</b></td></tr>
-                    <tr class="cargo-row-muted"><td>4</td><td><b>ЕДА</b></td><td>Расчет по кубу 440 $/кг.</td><td><b>4,6</b></td></tr>
-                    <tr class="cargo-row-light"><td>5</td><td><b>СПЕЦ-ТАРИФ</b><br /><span class="cargo-small-text">(Электроника)</span></td><td><b>ОТ 10 кг</b>. Расчет по кубу 450 $/кг.<br />Наушники, задние крышки для телефонов, держатели для телефонов, акустические системы / колонки, товары для отелей / гостиничные принадлежности, косметические приборы / аппараты для красоты, батарейки (типа АА, типа ААА, таблеточные батарейки) и т.д.</td><td><b>4,5</b></td></tr>
-                    <tr class="cargo-row-muted"><td>6</td><td><b>Электротехника</b><br /><span class="cargo-small-text">(мопед, квадроцикл, мотоцикл)</span></td><td>Расчет по кубу 380 $/кг. Не требуется разборки.</td><td><b>4,6</b></td></tr>
-                    <tr class="cargo-row-light"><td>7</td><td><b>Техника на бензине</b><br /><span class="cargo-small-text">(мопед, квадроцикл, мотоцикл)</span></td><td>Расчет по кубу 490 $/кг. Не требуется разборки.</td><td><b>3,7</b></td></tr>
-                    <tr class="cargo-row-muted"><td>8</td><td><b>Товары одного вида</b><br /><span class="cargo-small-text">(хозтовары)</span></td><td><b>ОТ 10 кг</b>. Расчет по кубу 350 $/кг.<br />Входят все товары одной категории: (инструменты, канцтовары, бижутерия, посуда, люстры, сумки, полотенца и т.д.)</td><td><b>3,5</b></td></tr>
-                    <tr class="cargo-row-light"><td>9</td><td><b>Товары одного вида</b><br /><span class="cargo-small-text">(хозтовары)</span></td><td><b>ОТ 50 кг</b>. Расчет по кубу 330 $/кг.<br />Входят все товары одной категории: (инструменты, канцтовары, бижутерия, посуда, люстры, сумки, полотенца и т.д.)<br /><span class="cargo-small-text">❗ Нужно фото товара</span></td><td><b>3,3</b></td></tr>
-                </tbody>
-            </table>
-            <div style="text-align:center; font-size:0.85rem; color:#666; margin-top:-5px; margin-bottom:15px;">* Тариф не зависит от плотности (если плотность 100 и более)</div>
-            <div class="cargo-info-block">
-                <h3>📌 Важные правила, сборы и запреты:</h3>
-                <ul>
-                    <li><b>Минимальный вес заказа:</b> от 5 кг. Если вес меньше, стоимость <b class="danger">10 $/кг</b>.</li>
-                    <li><b>Посадочный сбор:</b> <b class="danger">400 рублей за место</b> (оплачивается по прибытии груза в Москву).</li>
-                    <li><b>Страховка:</b> Действует с 5 кг. <b>Обязательно</b> укажите сумму груза в долларах.</li>
-                    <li><b>Фото/Видео:</b> Предоставляется по запросу. Если нужно фото товара, то сначала запрашиваем у менеджера и только после получения фото отправляем задание на отправку (доставку) товара.</li>
-                    <li><b>Хрупкие грузы:</b> Люстры, стекло и т.д. отправляются под вашу ответственность. Рекомендуется деревянная обрешетка!</li>
-                    <li><b>Если выкупаете на разные тарифы</b>, чтобы было дешевле или для разных клиентов – пишите в бланке заказа после личного кода через дефис 1,2,3 и т.д.</li>
-                    <li><b>Сборка груза:</b> 1–3 дня после отправки задания.</li>
-                    <li><b class="danger">🚫 Строго ЗАПРЕЩЕНО к провозу:</b> Лекарственные препараты, семена, растения, сигареты, военная тематика, химические препараты.</li>
-                </ul>
-                <p style="margin-top:10px; font-size:0.9rem; text-align:center; border-top:1px dashed #ccc; padding-top:8px;">При сомнениях уточняйте у менеджера. ⚡️ Пишите: <b>@kargomyr</b></p>
-            </div>
-        </div>
-    </div>
+    <div id="tariffCargoModal" class="modal"><div class="modal-content cargo-modal-content" style="position:relative;"><button class="close-btn" id="closeCargoTariffBtn">×</button><div class="cargo-header-blue"><h1>КАРГО MYR25</h1><h2>Доставка Китай - Москва</h2><div class="cargo-deadline">СРОКИ от 25 дней +</div></div><div class="cargo-section-title">📋 Основные тарифы</div><table class="cargo-table"><thead><tr><th>№</th><th style="width:20%;">Категория груза</th><th style="width:60%;">Условия и особенности (при плотности &lt; 100)</th><th>Цена<br />($/кг)</th></tr></thead><tbody><tr class="cargo-row-light"><td>1</td><td><b>Сборный груз</b></td><td>Расчет по кубу 420 $/кг, можно жидкости и еду, и деревянную обрешётку.</td><td><b>3,9</b></td></tr><tr class="cargo-row-muted"><td>2</td><td><b>Обувь ОПТ</b></td><td>Расчет по кубу 390 $/кг. <span class="cargo-small-text">Для брендовой обуви наценка +0,2 $/кг</span></td><td><b>4,0</b></td></tr><tr class="cargo-row-light"><td>3</td><td><b>Одежда ОПТ</b><br /><span class="cargo-small-text">(1–3 трека)</span></td><td>Расчет по кубу 400 $/кг.</td><td><b>3,8</b></td></tr><tr class="cargo-row-muted"><td>4</td><td><b>ЕДА</b></td><td>Расчет по кубу 440 $/кг.</td><td><b>4,6</b></td></tr><tr class="cargo-row-light"><td>5</td><td><b>СПЕЦ-ТАРИФ</b><br /><span class="cargo-small-text">(Электроника)</span></td><td><b>ОТ 10 кг</b>. Расчет по кубу 450 $/кг.<br />Наушники, задние крышки для телефонов, держатели для телефонов, акустические системы / колонки, товары для отелей / гостиничные принадлежности, косметические приборы / аппараты для красоты, батарейки (типа АА, типа ААА, таблеточные батарейки) и т.д.</td><td><b>4,5</b></td></tr><tr class="cargo-row-muted"><td>6</td><td><b>Электротехника</b><br /><span class="cargo-small-text">(мопед, квадроцикл, мотоцикл)</span></td><td>Расчет по кубу 380 $/кг. Не требуется разборки.</td><td><b>4,6</b></td></tr><tr class="cargo-row-light"><td>7</td><td><b>Техника на бензине</b><br /><span class="cargo-small-text">(мопед, квадроцикл, мотоцикл)</span></td><td>Расчет по кубу 490 $/кг. Не требуется разборки.</td><td><b>3,7</b></td></tr><tr class="cargo-row-muted"><td>8</td><td><b>Товары одного вида</b><br /><span class="cargo-small-text">(хозтовары)</span></td><td><b>ОТ 10 кг</b>. Расчет по кубу 350 $/кг.<br />Входят все товары одной категории: (инструменты, канцтовары, бижутерия, посуда, люстры, сумки, полотенца и т.д.)</td><td><b>3,5</b></td></tr><tr class="cargo-row-light"><td>9</td><td><b>Товары одного вида</b><br /><span class="cargo-small-text">(хозтовары)</span></td><td><b>ОТ 50 кг</b>. Расчет по кубу 330 $/кг.<br />Входят все товары одной категории: (инструменты, канцтовары, бижутерия, посуда, люстры, сумки, полотенца и т.д.)<br /><span class="cargo-small-text">❗ Нужно фото товара</span></td><td><b>3,3</b></td></tr></tbody></table><div style="text-align:center; font-size:0.85rem; color:#666; margin-top:-5px; margin-bottom:15px;">* Тариф не зависит от плотности (если плотность 100 и более)</div><div class="cargo-info-block"><h3>📌 Важные правила, сборы и запреты:</h3><ul><li><b>Минимальный вес заказа:</b> от 5 кг. Если вес меньше, стоимость <b class="danger">10 $/кг</b>.</li><li><b>Посадочный сбор:</b> <b class="danger">400 рублей за место</b> (оплачивается по прибытии груза в Москву).</li><li><b>Страховка:</b> Действует с 5 кг. <b>Обязательно</b> укажите сумму груза в долларах.</li><li><b>Фото/Видео:</b> Предоставляется по запросу. Если нужно фото товара, то сначала запрашиваем у менеджера и только после получения фото отправляем задание на отправку (доставку) товара.</li><li><b>Хрупкие грузы:</b> Люстры, стекло и т.д. отправляются под вашу ответственность. Рекомендуется деревянная обрешетка!</li><li><b>Если выкупаете на разные тарифы</b>, чтобы было дешевле или для разных клиентов – пишите в бланке заказа после личного кода через дефис 1,2,3 и т.д.</li><li><b>Сборка груза:</b> 1–3 дня после отправки задания.</li><li><b class="danger">🚫 Строго ЗАПРЕЩЕНО к провозу:</b> Лекарственные препараты, семена, растения, сигареты, военная тематика, химические препараты.</li></ul><p style="margin-top:10px; font-size:0.9rem; text-align:center; border-top:1px dashed #ccc; padding-top:8px;">При сомнениях уточняйте у менеджера. ⚡️ Пишите: <b>@kargomyr</b></p></div></div></div>
 
-    <!-- ===== МОДАЛЬНОЕ ОКНО: КАЛЬКУЛЯТОР ПЛОТНОСТИ ===== -->
-    <div class="density-modal-overlay" id="densityModalOverlay">
-        <div class="density-modal-content">
-            <button class="density-close-btn" id="densityCloseBtn">×</button>
-            <div class="density-header">
-                <h1>MYR25 | Доставка из Китая</h1>
-                <h2>Расчет плотности груза</h2>
-            </div>
-            <div class="density-input-grid">
-                <div class="density-input-group">
-                    <label>Длина (см.)</label>
-                    <input type="number" id="density-length" placeholder="40" value="40">
-                </div>
-                <div class="density-input-group">
-                    <label>Высота (см.)</label>
-                    <input type="number" id="density-height" placeholder="50" value="50">
-                </div>
-                <div class="density-input-group">
-                    <label>Ширина (см.)</label>
-                    <input type="number" id="density-width" placeholder="60" value="60">
-                </div>
-                <div class="density-input-group">
-                    <label>Вес (кг.)</label>
-                    <input type="number" id="density-weight" placeholder="50" value="50">
-                </div>
-            </div>
-            <div class="density-action-buttons">
-                <button class="density-calc-btn" id="densityCalcBtn">Рассчитать плотность</button>
-                <button class="density-pdf-btn" id="densityPdfBtn">📄 PDF</button>
-                <button class="density-history-btn" id="densityHistoryBtn">📜 История</button>
-            </div>
-            <div class="density-result-section" id="densityResultArea">
-                <div class="density-result-row">
-                    <span>Длина: <b id="d-disp-l">40</b> см.</span>
-                    <span>Высота: <b id="d-disp-h">50</b> см.</span>
-                    <span>Ширина: <b id="d-disp-w">60</b> см.</span>
-                </div>
-                <div class="density-result-row" style="justify-content: flex-start; font-weight: bold; margin-bottom: 10px;">
-                    Вес: <span style="margin-left: 5px;"><b id="d-disp-weight">50</b> кг.</span>
-                </div>
-                <hr class="density-blue-line">
-                <div class="density-formula-box">
-                    <div class="density-formula-step">
-                        <b>ОБЪЕМ:</b> Длина * Ширина * Высота<br>
-                        <span id="d-dim-display">40 см. * 50 см. * 60 см.</span><br>
-                        <span style="font-size: 0.9rem; color: #444;">(В 1 м. - 100 см.)</span>
-                    </div>
-                    <div class="density-formula-step" style="background: #eff6ff; padding: 8px; border-radius: 4px;">
-                        Считаем объём: <span id="d-dim-meters">0,4 м. * 0,5 м. * 0,6 м.</span> = <b id="d-res-volume">0,12</b> м³
-                    </div>
-                </div>
-                <hr class="density-blue-line">
-                <div class="density-formula-step" style="text-align: center; font-weight: bold; font-size: 1.05rem;">
-                    Считаем плотность груза: Вес / объём или: <span id="d-density-formula">50 кг. / 0,12 м³</span> = <span id="d-res-density" style="background: #f1f1f1; padding: 2px 6px; border-radius: 4px;">417</span>
-                </div>
-                <hr class="density-blue-line">
-                <div class="density-final">
-                    Плотность груза: <span id="d-fin-density">417</span> при весе <span id="d-fin-weight">50</span> кг. и объёме <span id="d-fin-volume">0,12</span> м³
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Плотность -->
+    <div class="density-modal-overlay" id="densityModalOverlay"><div class="density-modal-content"><button class="density-close-btn" id="densityCloseBtn">×</button><div class="density-header"><h1>MYR25 | Доставка из Китая</h1><h2>Расчет плотности груза</h2></div><div class="density-input-grid"><div class="density-input-group"><label>Длина (см.)</label><input type="number" id="density-length" placeholder="40" value="40"></div><div class="density-input-group"><label>Высота (см.)</label><input type="number" id="density-height" placeholder="50" value="50"></div><div class="density-input-group"><label>Ширина (см.)</label><input type="number" id="density-width" placeholder="60" value="60"></div><div class="density-input-group"><label>Вес (кг.)</label><input type="number" id="density-weight" placeholder="50" value="50"></div></div><div class="density-action-buttons"><button class="density-calc-btn" id="densityCalcBtn">Рассчитать плотность</button><button class="density-pdf-btn" id="densityPdfBtn">📄 PDF</button><button class="density-history-btn" id="densityHistoryBtn">📜 История</button></div><div class="density-result-section" id="densityResultArea"><div class="density-result-row"><span>Длина: <b id="d-disp-l">40</b> см.</span><span>Высота: <b id="d-disp-h">50</b> см.</span><span>Ширина: <b id="d-disp-w">60</b> см.</span></div><div class="density-result-row" style="justify-content: flex-start; font-weight: bold; margin-bottom: 10px;">Вес: <span style="margin-left: 5px;"><b id="d-disp-weight">50</b> кг.</span></div><hr class="density-blue-line"><div class="density-formula-box"><div class="density-formula-step"><b>ОБЪЕМ:</b> Длина * Ширина * Высота<br><span id="d-dim-display">40 см. * 50 см. * 60 см.</span><br><span style="font-size: 0.9rem; color: #444;">(В 1 м. - 100 см.)</span></div><div class="density-formula-step" style="background: #eff6ff; padding: 8px; border-radius: 4px;">Считаем объём: <span id="d-dim-meters">0,4 м. * 0,5 м. * 0,6 м.</span> = <b id="d-res-volume">0,12</b> м³</div></div><hr class="density-blue-line"><div class="density-formula-step" style="text-align: center; font-weight: bold; font-size: 1.05rem;">Считаем плотность груза: Вес / объём или: <span id="d-density-formula">50 кг. / 0,12 м³</span> = <span id="d-res-density" style="background: #f1f1f1; padding: 2px 6px; border-radius: 4px;">417</span></div><hr class="density-blue-line"><div class="density-final">Плотность груза: <span id="d-fin-density">417</span> при весе <span id="d-fin-weight">50</span> кг. и объёме <span id="d-fin-volume">0,12</span> м³</div></div></div></div>
 
-    <!-- ===== МОДАЛЬНОЕ ОКНО: ИСТОРИЯ ПЛОТНОСТИ ===== -->
-    <div class="density-history-overlay" id="densityHistoryOverlay">
-        <div class="density-history-content">
-            <button class="density-close-btn" id="densityHistoryCloseBtn">×</button>
-            <h2 style="margin-top: 0;">📜 История вычислений плотности</h2>
-            <div class="density-history-list" id="densityHistoryList">
-                <div class="density-history-empty">История пуста</div>
-            </div>
-            <div class="density-history-actions">
-                <button class="density-clear-history-btn" id="densityClearHistoryBtn">🗑 Очистить всё</button>
-                <button class="density-close-history-btn" id="densityCloseHistoryBtn">Закрыть</button>
-            </div>
-        </div>
-    </div>
+    <div class="density-history-overlay" id="densityHistoryOverlay"><div class="density-history-content"><button class="density-close-btn" id="densityHistoryCloseBtn">×</button><h2 style="margin-top: 0;">📜 История вычислений плотности</h2><div class="density-history-list" id="densityHistoryList"><div class="density-history-empty">История пуста</div></div><div class="density-history-actions"><button class="density-clear-history-btn" id="densityClearHistoryBtn">🗑 Очистить всё</button><button class="density-close-history-btn" id="densityCloseHistoryBtn">Закрыть</button></div></div></div>
 
-    <!-- ===== МОДАЛЬНОЕ ОКНО: ПАМЯТКА "КАК РАССЧИТАТЬ СТОИМОСТЬ" ===== -->
-    <div class="cost-modal-overlay" id="costModalOverlay">
-        <div class="cost-modal-content">
-            <button class="cost-close-btn" id="costCloseBtn">×</button>
-            <div class="cost-header-green">
-                <h1>КАРГО MYR25</h1>
-                <h2>Расчет стоимости доставки</h2>
-            </div>
-            <table class="cost-table">
-                <thead>
-                    <tr>
-                        <th>Параметр / Вопрос</th>
-                        <th>Пояснение и правила</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="cost-row-light">
-                        <td><b>Из чего складывается итоговая цена?</b></td>
-                        <td>Стоимость доставки зависит от <b>плотности</b> груза, <b>типа</b> товара, выбранных <b>сроков</b>, наличия <b>страховки</b> и типа <b>упаковки</b>.</td>
-                    </tr>
-                    <tr class="cost-row-muted">
-                        <td><b>Важное требование</b></td>
-                        <td>Из-за строгого таможенного оформления <b>необходимо предоставлять полную и достоверную информацию</b> о составе перевозимого груза.</td>
-                    </tr>
-                    <tr class="cost-row-light">
-                        <td><b>Как рассчитать плотность груза?</b></td>
-                        <td>
-                            Вам необходимо знать <b>габариты</b> (в сантиметрах) и <b>вес</b> (в килограммах) вашего груза.<br><br>
-                            <div class="cost-formula-box">
-                                Плотность = Вес (кг) + (Длина × Ширина × Высота в сантиметрах)
-                            </div>
-                            <span style="font-size: 0.85rem; color: #666;">* При общении с продавцом всегда можно запросить габариты упаковки и точный вес.</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="cost-footer-note">
-                💬 Нужен точный расчет под ваш груз? Напишите менеджеру:<br>
-                <b style="font-size: 1.2rem;">@kargomyr</b>
-            </div>
-        </div>
-    </div>
+    <div class="cost-modal-overlay" id="costModalOverlay"><div class="cost-modal-content"><button class="cost-close-btn" id="costCloseBtn">×</button><div class="cost-header-green"><h1>КАРГО MYR25</h1><h2>Расчет стоимости доставки</h2></div><table class="cost-table"><thead><tr><th>Параметр / Вопрос</th><th>Пояснение и правила</th></tr></thead><tbody><tr class="cost-row-light"><td><b>Из чего складывается итоговая цена?</b></td><td>Стоимость доставки зависит от <b>плотности</b> груза, <b>типа</b> товара, выбранных <b>сроков</b>, наличия <b>страховки</b> и типа <b>упаковки</b>.</td></tr><tr class="cost-row-muted"><td><b>Важное требование</b></td><td>Из-за строгого таможенного оформления <b>необходимо предоставлять полную и достоверную информацию</b> о составе перевозимого груза.</td></tr><tr class="cost-row-light"><td><b>Как рассчитать плотность груза?</b></td><td>Вам необходимо знать <b>габариты</b> (в сантиметрах) и <b>вес</b> (в килограммах) вашего груза.<br><br><div class="cost-formula-box">Плотность = Вес (кг) + (Длина × Ширина × Высота в сантиметрах)</div><span style="font-size: 0.85rem; color: #666;">* При общении с продавцом всегда можно запросить габариты упаковки и точный вес.</span></td></tr></tbody></table><div class="cost-footer-note">💬 Нужен точный расчет под ваш груз? Напишите менеджеру:<br><b style="font-size: 1.2rem;">@kargomyr</b></div></div></div>
 
     <div id="notification" class="notification"></div>
     <div id="toast" class="toast">✅ Сохранено</div>
 
-    <!-- ===== СКРИПТЫ ===== -->
     <script>
         // ========================================================
-        // 1. SERVICE WORKER (без изменений)
+        // SERVICE WORKER
         // ========================================================
         if ('serviceWorker' in navigator) {
             const swCode = `
@@ -666,13 +500,10 @@
         }
 
         // ========================================================
-        // 2. НОВЫЙ МЕХАНИЗМ PDF (скачивание через html2pdf, fallback на печать)
+        // НОВЫЙ МЕХАНИЗМ PDF (скачивание через html2pdf, fallback на печать)
         // ========================================================
         function generatePDF(element, filename = 'документ.pdf') {
-            if (!element) {
-                console.warn('Нет элемента для PDF');
-                return;
-            }
+            if (!element) return;
             if (typeof html2pdf !== 'undefined') {
                 const opt = {
                     margin: [10, 10, 10, 10],
@@ -681,10 +512,7 @@
                     html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-                html2pdf().set(opt).from(element).save().catch(err => {
-                    console.warn('html2pdf ошибка, fallback на печать', err);
-                    fallbackPrint(element);
-                });
+                html2pdf().set(opt).from(element).save().catch(() => fallbackPrint(element));
             } else {
                 fallbackPrint(element);
             }
@@ -692,7 +520,6 @@
 
         function fallbackPrint(element) {
             const clone = element.cloneNode(true);
-            // Удаляем лишние элементы
             clone.querySelectorAll('.btn, .remove-btn, .save-load-section, .buttons-section, .copy-row, .tab-switcher, .modal, .density-modal-overlay, .cost-modal-overlay, .density-history-overlay, .notification, .toast')
                 .forEach(el => el.remove());
             const iframe = document.createElement('iframe');
@@ -745,15 +572,11 @@
         }
 
         // ========================================================
-        // 3. НОВЫЙ МЕХАНИЗМ КОПИРОВАНИЯ (с fallback)
+        // НОВЫЙ МЕХАНИЗМ КОПИРОВАНИЯ (с fallback)
         // ========================================================
         function copyText(text, successMsg = 'Скопировано!') {
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showNotification(successMsg);
-                }).catch(() => {
-                    fallbackCopyText(text, successMsg);
-                });
+                navigator.clipboard.writeText(text).then(() => showNotification(successMsg)).catch(() => fallbackCopyText(text, successMsg));
             } else {
                 fallbackCopyText(text, successMsg);
             }
@@ -770,11 +593,8 @@
             textarea.select();
             try {
                 const ok = document.execCommand('copy');
-                if (ok) {
-                    showNotification(successMsg);
-                } else {
-                    showManualCopy(text);
-                }
+                if (ok) showNotification(successMsg);
+                else showManualCopy(text);
             } catch (e) {
                 showManualCopy(text);
             }
@@ -802,8 +622,7 @@
         }
 
         // ========================================================
-        // 4. ВЕСЬ ОСТАЛЬНОЙ КОД (калькулятор, бланк, модалки, история, плотность) — БЕЗ ИЗМЕНЕНИЙ
-        //    Заменены только обработчики PDF и копирования.
+        // ОСНОВНОЙ СКРИПТ (калькулятор, бланк, история, плотность и т.д.)
         // ========================================================
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -1341,7 +1160,7 @@
 
             document.getElementById('showDensityBtn').addEventListener('click', function() {
                 densityOverlay.classList.add('show');
-                calculateDensity(); // сразу посчитать
+                calculateDensity();
             });
 
             densityCloseBtn.addEventListener('click', function() { densityOverlay.classList.remove('show'); });
@@ -1427,7 +1246,7 @@
 
             densityCalcBtn.addEventListener('click', calculateDensity);
 
-            // ===== НОВЫЙ ОБРАБОТЧИК PDF ДЛЯ ПЛОТНОСТИ =====
+            // ---------- PDF ДЛЯ ПЛОТНОСТИ ----------
             densityPdfBtn.addEventListener('click', function() {
                 const resultArea = document.getElementById('densityResultArea');
                 if (resultArea) generatePDF(resultArea, 'плотность_груза.pdf');
@@ -1461,7 +1280,7 @@
             costCloseBtn.addEventListener('click', function() { costOverlay.classList.remove('show'); });
             costOverlay.addEventListener('click', function(e) { if (e.target === costOverlay) costOverlay.classList.remove('show'); });
 
-            // ---------- PDF ДЛЯ КАЛЬКУЛЯТОРА И БЛАНКА (НОВЫЕ ОБРАБОТЧИКИ) ----------
+            // ---------- PDF ДЛЯ КАЛЬКУЛЯТОРА И БЛАНКА ----------
             document.getElementById('exportToPDFBtn')?.addEventListener('click', function() {
                 const el = document.querySelector('.calc-container');
                 if (el) generatePDF(el, 'посылка.pdf');
@@ -1486,7 +1305,7 @@
                 }, 3000);
             });
 
-            // ---------- КОПИРОВАНИЕ ССЫЛКИ (НОВЫЕ ОБРАБОТЧИКИ) ----------
+            // ---------- КОПИРОВАНИЕ ССЫЛКИ ----------
             document.getElementById('copyLinkCalc')?.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const url = generateSharableURL();
@@ -1498,7 +1317,7 @@
                 copyText(url, 'Ссылка скопирована!');
             });
 
-            // ---------- ГЕНЕРАЦИЯ ССЫЛКИ (без изменений) ----------
+            // ---------- ГЕНЕРАЦИЯ ССЫЛКИ ----------
             function packState() {
                 const calcData = (function() {
                     const products = [];
@@ -1542,7 +1361,6 @@
             updatePackaging();
             calculateTotal();
 
-            // Восстановление из URL
             const hash = window.location.hash;
             if (hash.startsWith('#state=')) {
                 const encoded = hash.substring(7);
